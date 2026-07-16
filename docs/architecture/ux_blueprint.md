@@ -1,123 +1,140 @@
 # HerShield: Phase 1.5 - Product Architecture & UX Blueprint
 
-This document serves as the master blueprint for the product architecture, user experience, and technical mappings for HerShield, a production-grade AI-powered travel and safety platform for women.
+**Confidential Product & Technical Blueprint**
+*Target Audience: Investors, Principal Engineers, Design Leads, Product Managers.*
+
+## Executive Summary
+HerShield is a comprehensive AI-powered travel and safety ecosystem designed exclusively for women. The platform transcends traditional travel planning by integrating safety, community, and emergency support at a foundational level.
 
 ---
 
 ## 1. Complete Screen Inventory
 
-### Web Application (Traveler Facing)
-**Public / Unauthenticated:**
-- `W-01` Landing Page
-- `W-02` About / Mission
-- `W-03` Login
-- `W-04` Signup / Registration
-- `W-05` Identity Verification (Onboarding)
+### 1.1 Web/Mobile Web Application (Traveler)
 
-**Authenticated (Dashboard):**
-- `W-06` Home Dashboard (Overview)
-- `W-07` AI Trip Planner (Chat Interface)
-- `W-08` Trip Details & Itinerary
-- `W-09` Safety Hub (Real-time tracking, active alerts)
-- `W-10` Emergency / SOS Mode (High contrast, quick actions)
-- `W-11` Community Feed (Discussions, reviews)
-- `W-12` Community Post Detail
-- `W-13` User Profile
-- `W-14` Settings (Privacy, Emergency Contacts, Preferences)
+**Authentication & Onboarding**
+- `W-AUTH-01` Landing / Value Proposition
+- `W-AUTH-02` Login (OAuth / Magic Link)
+- `W-AUTH-03` Signup & Account Creation
+- `W-AUTH-04` Identity Verification (Gov ID + Selfie)
+- `W-AUTH-05` Verification Pending State
+- `W-AUTH-06` Emergency Contacts Setup
 
-### Admin Application (Moderator / Admin Facing)
-- `A-01` Admin Login
-- `A-02` Admin Dashboard (System health, active incidents)
-- `A-03` Identity Verification Queue (Manual review of travelers)
-- `A-04` Incident Response Center (Managing active SOS alerts)
-- `A-05` User Management (Ban, promote, verify)
-- `A-06` Platform Analytics
+**Dashboard & Navigation**
+- `W-DASH-01` Home (Active trip snapshot, Quick SOS, Weather/Safety alerts)
+- `W-DASH-02` Search & Discover (Destinations, safe zones)
+
+**Trips & AI Planning**
+- `W-TRIP-01` My Trips List (Past, Present, Future)
+- `W-TRIP-02` AI Trip Planner Chat (Streaming UI)
+- `W-TRIP-03` Trip Detail Overview (Itinerary)
+- `W-TRIP-04` Interactive Trip Map (Mapbox)
+- `W-TRIP-05` Hotel/Accommodation Detail (Safety scores highlighted)
+
+**Safety & Guardian Mode**
+- `W-SAFE-01` Safety Hub (Local emergency info, Embassy details)
+- `W-SAFE-02` Guardian Mode Setup (Select contacts, set duration)
+- `W-SAFE-03` Guardian Active State (Countdown timer, check-in button)
+- `W-SAFE-04` Emergency SOS Slider (High contrast, instant action)
+
+**Community**
+- `W-COMM-01` Community Feed (Chronological/Algorithm-sorted posts)
+- `W-COMM-02` Post Detail & Comments
+- `W-COMM-03` Create Post (Rich text, media, location tag)
+- `W-COMM-04` Destination Reviews (Female-centric safety reviews)
+
+**Profile & Settings**
+- `W-PROF-01` User Profile (Travel memories, badges)
+- `W-PROF-02` Account Settings
+- `W-PROF-03` Privacy & Permissions (Location tracking toggles)
+- `W-PROF-04` Emergency Contacts Management
+
+### 1.2 Admin / Moderator Dashboard
+- `A-AUTH-01` Admin Secure Login (MFA required)
+- `A-DASH-01` System Overview (Active SOS, Server Health)
+- `A-USER-01` Verification Queue (Manual ID review)
+- `A-USER-02` User Management (Ban, promote, suspend)
+- `A-SAFE-01` Incident Response Center (Live tracking of active SOS)
+- `A-COMM-01` Moderation Queue (Flagged posts/reviews)
 
 ---
 
 ## 2. Information Architecture
 
+**Hierarchy Principles:** Flat navigation to ensure safety features are never more than 1 click away.
+
 ```mermaid
 graph TD
-    Root[HerShield Web] --> Auth[Authentication]
-    Root --> App[Authenticated App]
+    Root[HerShield Ecosystem] --> Onboarding[Onboarding & ID Verification]
+    Root --> CoreApp[Core Application]
     
-    Auth --> Login
-    Auth --> Signup
-    Auth --> Verification[Verification Pipeline]
-
-    App --> Home[Home Dashboard]
-    App --> Trips[Trips & Planning]
-    App --> Safety[Safety & Emergency]
-    App --> Comm[Community]
-    App --> Profile[Profile & Settings]
-
-    Trips --> AIPlanner[AI Trip Planner]
-    Trips --> TripDetail[Trip Itinerary & Map]
-
-    Safety --> Tracking[Live Tracking]
-    Safety --> Contacts[Emergency Contacts]
-    Safety --> SOS[Emergency SOS]
-
-    Comm --> Feed[Verified Feed]
-    Comm --> Reviews[Location Reviews]
+    CoreApp --> Home[Home / Overview]
+    CoreApp --> Trips[Trip Management]
+    CoreApp --> Safety[Safety & SOS]
+    CoreApp --> Community[Verified Community]
+    
+    Trips --> AIPlanner[AI Planning Assistant]
+    Trips --> Itineraries[Itineraries & Maps]
+    
+    Safety --> Guardian[Guardian Check-ins]
+    Safety --> Emergency[Emergency SOS Overlay]
+    Safety --> Info[Local Safety Info]
+    
+    Community --> Feed[Global Feed]
+    Community --> Reviews[Safe Place Reviews]
 ```
 
 ---
 
-## 3. User Flows
+## 3. User Journeys
 
-### A. Strict Identity Verification Flow
-1. User creates account (Email/OAuth).
-2. User is prompted for Identity Verification (required for Community/Safety access).
-3. User uploads Government ID & takes live selfie (Integration with verification provider / manual review).
-4. Profile status is set to `Pending Verification`.
-5. Upon approval, role is upgraded from `Guest` to `Verified Traveler`.
+### 3.1 First-Time User (Onboarding)
+- **Goal:** Gain trust, securely verify identity, and set up safety net.
+- **Pain Point:** Verification can feel intrusive.
+- **Opportunity:** Frame ID verification as the ultimate safety feature to keep bad actors out.
+- **Emotion:** Reassurance and Trust.
 
-### B. AI Trip Planning Flow
-1. User navigates to AI Trip Planner.
-2. User provides prompt: *"I want a 3-day solo trip to Tokyo focusing on safe, female-friendly hostels and well-lit areas."*
-3. AI Agent streams response, dynamically rendering an interactive itinerary UI.
-4. User clicks "Save to Trips".
-5. Background job calculates safety scores for the route via Mapbox and database stats.
+### 3.2 Solo Traveler (Trip Planning & Execution)
+- **Goal:** Plan a 5-day trip to Paris with high safety confidence.
+- **Journey:** Opens AI Planner -> Asks for safe neighborhoods -> AI generates itinerary -> User shares itinerary with Guardian.
+- **Pain Point:** Overwhelming research on neighborhood safety.
+- **Opportunity:** AI distills global safety data into actionable, safe itineraries.
+- **Emotion:** Empowerment and Excitement.
 
-### C. Emergency SOS Flow
-1. User activates SOS via UI slider or widget.
-2. System immediately logs GPS coordinates.
-3. Automated SMS/WhatsApp notifications sent to Emergency Contacts.
-4. Alert broadcasted to Admin Incident Response Center.
-5. (Optional) LiveKit audio streaming starts recording background audio securely.
-
----
-
-## 4. Navigation Structure
-
-**Web (Desktop View):**
-- **Sidebar (Persistent):** Home, Trips, Community, Safety, Profile.
-- **Top Bar:** Search, Notifications, Active Trip Status, SOS Button (always visible, red highlight).
-
-**Web (Mobile View):**
-- **Bottom Navigation Tab Bar:** Home, Trips, SOS (Center, Prominent), Community, Profile.
-- **Header:** Contextual actions, Notifications.
+### 3.3 Emergency Situation (SOS)
+- **Goal:** Get immediate help without drawing attention.
+- **Journey:** User feels unsafe -> Opens app -> Uses SOS Slider (1-swipe) -> Screen dims to conceal activity -> Live location and audio stream to guardians & admins.
+- **Pain Point:** Panic reduces cognitive ability to navigate complex menus.
+- **Opportunity:** 1-click/1-swipe ubiquitous access.
+- **Emotion:** Fear shifting to Relief knowing help is active.
 
 ---
 
-## 5. Component Inventory (packages/ui & packages/design-system)
+## 4. Navigation System
 
-**Core UI (shadcn/ui based):**
-- `Button` (Primary, Secondary, Destructive for SOS, Ghost)
-- `Card` (Trip summaries, Post snippets)
-- `Dialog/Sheet` (Modals for quick edits, AI chat slide-outs)
-- `Avatar` (User images with verification badges)
-- `Badge` (Safety scores: High, Medium, Low)
-- `Form/Input/Select` (Booking, settings, planning)
+**Decision: Hybrid Navigation (Bottom Nav + Floating Contextual Actions)**
 
-**Domain-Specific UI:**
-- `AIChatInterface`: Streaming text blocks, suggested prompts.
-- `ItineraryTimeline`: Vertical timeline of planned stops.
-- `SafetyMap`: Mapbox GL component with heatmaps for safety scores.
-- `SOSSlider`: "Slide to activate SOS" to prevent accidental triggers.
-- `VerificationBadge`: Shield icon with holographic CSS effect.
+- **Mobile Web (Primary Target):** Fixed Bottom Navigation Bar.
+  - *Why:* Ergonomic for one-handed use (critical when walking alone with luggage).
+  - *Tabs:* Home, Trips, SOS (Center, Prominent, distinct color), Community, Profile.
+- **Floating Actions:** Contextual FABs for "Add Post" or "New Trip".
+- **Top Bar:** Strictly reserved for contextual back buttons, settings icons, and real-time network status indicators.
+
+---
+
+## 5. Component Inventory
+
+**Core Primitives (shadcn/ui + Tailwind v4):**
+- `Button`: Primary, Secondary, Ghost, Destructive (Reserved for SOS/Deletions).
+- `Card`: The foundational container for trips, posts, and settings.
+- `BottomSheet`: Used for complex forms (e.g., adding emergency contacts) to keep users in context without full page reloads.
+
+**Domain-Specific Components:**
+- `SafetyBadge`: A visually distinct pill (Green/Yellow/Red) indicating area safety based on real-time data.
+- `TripCard`: Displays destination image, dates, and a mini-safety badge.
+- `AIChatBubble`: Supports markdown, inline Mapbox markers, and actionable buttons ("Add to itinerary").
+- `SOSSlider`: "Slide to activate" component. *Why:* Prevents accidental triggers better than a button press.
+- `TimelineNode`: Used in itineraries to show chronological travel plans.
 
 ---
 
@@ -125,93 +142,139 @@ graph TD
 
 ```mermaid
 graph TD
-    shared --> feature-auth
-    shared --> feature-trips
-    shared --> feature-safety
-    shared --> feature-community
+    Auth[Identity & Auth] --> UserProfile[User Profile]
+    Auth --> Verification[Verification Service]
     
-    feature-auth --> feature-community
-    feature-auth --> feature-safety
-    feature-auth --> feature-trips
+    Verification --> Community[Community Features]
+    Verification --> Trips[Trip Planning]
     
-    feature-safety --> feature-trips
-    feature-safety --> feature-notifications
+    Contacts[Emergency Contacts] --> Guardian[Guardian Mode]
+    Contacts --> SOS[SOS Emergency]
     
-    ai --> feature-trips
-    database --> server
-    server --> feature-* 
+    Realtime[Realtime Tracking] --> SOS
+    Realtime --> Guardian
+    
+    AI[AI Engine] --> Trips
+    AI --> SafetyScoring[Safety Scoring]
+    
+    Maps[Mapbox] --> SafetyScoring
+    Maps --> Trips
 ```
-*Note: Auth is foundational. Safety informs Trips. AI powers Trips.*
 
 ---
 
-## 7. Screen-to-Database Mapping
+## 7. Screen → Database Mapping
 
-| Screen / Feature | Primary Tables Accessed (Drizzle Schema) |
-| :--- | :--- |
-| **Auth & Verification** | `users`, `sessions`, `accounts`, `verifications` |
-| **Profile & Settings** | `users`, `emergency_contacts`, `user_preferences` |
-| **AI Trip Planner** | `trips`, `trip_days`, `locations`, `ai_conversations` (pgvector for embeddings) |
-| **Safety Hub & SOS** | `safety_incidents`, `location_pings`, `users` |
-| **Community Feed** | `posts`, `comments`, `likes`, `location_reviews` |
-| **Admin Dashboard** | `users`, `safety_incidents`, `verifications` |
-
----
-
-## 8. Screen-to-API Mapping
-
-**API Prefix:** `/api/v1`
-
-| Screen | tRPC / Hono Router Path | Action |
+| Screen | Core Entities Read | Core Entities Written |
 | :--- | :--- | :--- |
-| **Auth** | `auth.*` (Handled mostly by Better Auth) | Login, Register, Verify |
-| **Trips** | `trips.generateAI` (Streaming) | Generate itinerary via Agent |
-| **Trips** | `trips.listUserTrips` (Query) | Fetch saved trips |
-| **Safety** | `safety.triggerSOS` (Mutation) | High-priority incident creation |
-| **Safety** | `safety.updateLocation` (Mutation) | Background telemetry ping |
-| **Community**| `community.getFeed` (Query) | Fetch paginated posts |
+| **Verification (W-AUTH-04)** | `users` | `verifications`, `users.status` |
+| **Dashboard (W-DASH-01)** | `trips`, `safety_alerts`, `users` | `location_pings` |
+| **AI Planner (W-TRIP-02)** | `users.preferences`, `destinations` | `ai_conversations`, `trips`, `itineraries` |
+| **Guardian Mode (W-SAFE-02)** | `emergency_contacts` | `guardian_sessions`, `location_pings` |
+| **SOS Overlay (W-SAFE-04)** | `emergency_contacts` | `safety_incidents`, `location_pings` |
+| **Community (W-COMM-01)** | `posts`, `users`, `comments` | `posts`, `likes`, `comments` |
 
 ---
 
-## 9. MVP vs Future Roadmap
+## 8. Screen → API Mapping
 
-### MVP (Phase 2 & 3)
-- Strict Auth & Manual Verification (`Verified Traveler`).
-- AI Trip Generation (OpenAI/Anthropic) with basic interactive UI.
-- Mapbox integration for viewing itineraries.
-- Basic SOS Button (Updates DB, triggers in-app notification).
-- Community Feed (Text + Image posts).
-
-### Future Roadmap
-- **Hardware Integration**: Bluetooth panic button integration.
-- **LiveKit Streaming**: Auto-stream audio/video to trusted contacts during SOS.
-- **Automated Verification**: Integration with Stripe Identity or Onfido.
-- **AI Local Guide Agents**: Real-time contextual voice agents.
-- **Offline Mode**: Local-first sync for itineraries when internet drops.
+| Screen | Read APIs | Write / Mutation APIs | Realtime / Streams |
+| :--- | :--- | :--- | :--- |
+| **AI Planner** | `trips.getHistory` | `trips.save` | Streaming via AI SDK for chat response |
+| **Guardian Mode** | `safety.getContacts` | `safety.startSession`, `safety.checkIn` | WebSocket via LiveKit for location tracking |
+| **SOS Emergency** | `safety.getInstructions`| `safety.triggerSOS` | WebRTC for background audio streaming |
+| **Community Feed** | `community.getFeed` | `community.createPost`, `community.like` | N/A |
 
 ---
 
-## 10. Wireframe Descriptions (Blueprint)
+## 9. MVP Roadmap
 
-### `W-06` Home Dashboard
-- **Header**: "Welcome back, [Name]". Verification badge next to name.
-- **Hero Card**: Active or Upcoming Trip summary with a mini-map snippet.
-- **Quick Actions**: "Plan new trip with AI", "Share Live Location".
-- **Safety Status**: A persistent widget showing current city safety rating and local emergency numbers (911/112).
-- **Recent Community Activity**: Carousel of recent highly-rated posts from verified women.
+### Version 1: The Core Safety & AI Engine (Current Scope)
+- Identity verification (Stripe Identity or Manual).
+- AI Trip Planner (Text-to-Itinerary).
+- Basic SOS (SMS to emergency contacts + DB logging).
+- Read-only safety information via Maps.
+*Why:* Establishes the core value proposition (AI + Basic Safety) to acquire initial users.
 
-### `W-07` AI Trip Planner
-- **Layout**: Split screen (Desktop). Left is a chat interface, right is a dynamic Map/Itinerary view.
-- **Chat**: User types constraints. Agent responds and simultaneously injects "Itinerary Card" components into the chat stream.
-- **Map**: Automatically pans and zooms to the city being discussed, dropping pins for recommended safe hotels.
+### Version 2: The Guardian & Community Update
+- Guardian Mode (Check-ins, live location sharing).
+- Verified Community Feed (Posts, reviews).
+- Push notifications via FCM/APNs.
+*Why:* Drives retention and network effects.
 
-### `W-10` Emergency SOS Mode
-- **Visuals**: Dark/Red high-contrast theme. Overrides system brightness if possible.
-- **Primary Element**: Large "Slide to Cancel" within 10 seconds.
-- **Secondary Elements**: Large buttons to silently dial police, dial emergency contact, or sound loud alarm.
-- **Background Status**: "Recording audio...", "Broadcasting location...".
+### Version 3: Advanced Hardware & Realtime
+- LiveKit streaming during SOS (Audio/Video).
+- Automated risk scoring based on live global events.
+- Wearable integration (Apple Watch SOS trigger).
+*Why:* Elevates the product to an enterprise-grade safety tool.
 
-### `A-03` Identity Verification Queue (Admin)
-- **Layout**: Data table of pending users.
-- **Detail View**: Split pane showing user-uploaded selfie vs. ID card.
-- **Actions**: Approve (Promote to Verified Traveler), Reject (Request clearer photo), Ban.
+---
+
+## 10. Wireframe Blueprint
+
+### Screen: W-10 Emergency SOS Mode
+- **Header:** Hidden to reduce distraction. A persistent red status bar at the very top indicates "SOS ACTIVE".
+- **Body:** Dark mode enforced. Deep red background gradient. 
+- **Center Action:** `SOSSlider` spanning 80% of the screen width. Text: "Slide for Emergency".
+- **Secondary Actions:** `Button` (Ghost, White text): "Silent Police Dispatch", `Button` (Ghost): "Sound Alarm".
+- **Animations:** Gentle pulsing animation on the slider track to draw the eye in high-stress situations.
+
+### Screen: W-07 AI Trip Planner
+- **Header:** Back button, Title: "Plan a Trip", Settings icon.
+- **Body (Flex Layout):** 
+  - **Scrollable Chat Area:** `AIChatBubble` components alternate between user and AI. AI bubbles have a distinct, softer background (e.g., subtle purple).
+  - **Floating Action Bar (Bottom):** Text input anchored to the bottom with a primary submit button.
+- **Interactions:** When AI suggests an itinerary, the chat bubble includes a `Button` "View on Map". Clicking it slides up a `BottomSheet` containing the `SafetyMap`.
+
+---
+
+## 11. UX Guidelines
+
+- **Navigation Rules:** No dead ends. Every screen must have a clear "Back" or "Close" action. Bottom navigation must remain visible unless typing in a chat or on the SOS screen.
+- **Interaction Rules (One-Handed Usage):** Critical touch targets (SOS, Next steps, Chat input) must exist in the bottom 40% of the screen.
+- **Loading States:** Skeleton loaders matching the exact shape of incoming data. Avoid full-screen spinners. AI streaming must show characters instantly.
+- **Error States:** Empathetic, non-technical language. E.g., "We couldn't reach the map server right now. Your safety features are still fully operational."
+- **Empty States:** Action-oriented. Instead of "No trips", use "Plan your first safe adventure with our AI".
+- **Success States:** Subtle haptic feedback (vibration via Web/Device APIs) paired with brief toast notifications.
+
+---
+
+## 12. Product Design Principles
+
+1. **Safety First:** Security overrides convenience. ID verification is mandatory; there are no exceptions to protect the community.
+2. **Minimal Cognitive Load:** In an emergency, a user's IQ effectively drops. Safety features require zero reading and rely on muscle memory (e.g., sliding a massive button).
+3. **One-Handed Usage:** Users often carry luggage or hold a bag. Navigation must accommodate thumb-only use.
+4. **Trust by Design:** Absolute transparency. If location is being tracked, a persistent, un-dismissible banner must clearly state it.
+5. **AI Assistance Without Overwhelm:** AI should suggest, not mandate. The interface should feel like a collaborative chat with an expert, not a rigid form.
+
+---
+
+## 13. Complete Feature Matrix
+
+| Feature | Priority | Complexity | Dependencies | Business Value | User Value | Dev Phase |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **ID Verification** | P0 (Blocker) | High | feature-auth | High (Trust) | High (Safety) | V1 |
+| **AI Trip Planner** | P1 | High | AI Package | High (Acquisition) | High | V1 |
+| **SOS Basic** | P1 | Low | feature-safety | High | Critical | V1 |
+| **Guardian Mode** | P2 | Medium | Realtime/Maps | Medium | High | V2 |
+| **Community Feed** | P3 | High | Verification | High (Retention) | Medium | V2 |
+| **LiveKit SOS Stream**| P4 | Very High | Realtime | Low (Niche) | Critical | V3 |
+
+---
+
+## 14. Risk Analysis
+
+- **UX Risks:** ID Verification causes user drop-off. *Mitigation:* Offer a "guest mode" that lets them browse AI trip generation, but locks Community and SOS until verified.
+- **Technical Risks:** AI hallucinations suggesting unsafe locations. *Mitigation:* Enforce an intermediate validation layer where AI outputs are cross-referenced against the pgvector database of known safe zones before rendering to the user.
+- **Security Risks:** Bad actors bypassing verification to stalk women. *Mitigation:* Multi-factor KYC (Gov ID + Liveness check) and strict community reporting tools with automatic IP bans.
+- **Scalability Risks:** High volume of location pings during Guardian mode killing the database. *Mitigation:* Use Redis/Cloudflare KV for ephemeral location data, only syncing to PostgreSQL on session end or SOS trigger.
+
+---
+
+## 15. Future Expansion Architecture
+
+The Turborepo + Clean Architecture approach guarantees future extensibility:
+- **Wearables / Smart Rings:** By keeping business logic in `packages/server` and exposing versioned APIs (`/api/v1`), an Apple Watch app or Smart Ring backend can trigger `safety.triggerSOS` directly without requiring UI modifications.
+- **International Travel (Offline Mode):** Data fetching will be abstracted behind TanStack Query and PWA service workers, allowing offline caching of itineraries and local emergency numbers.
+- **Voice Assistant:** The `packages/ai` module uses decoupled tools. A future voice interface simply passes transcribed text into the exact same AI agents used by the text chat UI.
+- **Enterprise Safety:** Future B2B pivots (e.g., protecting female journalists) can be handled by creating a new app in the monorepo (`apps/enterprise`) that consumes the same `packages/feature-safety` logic with stricter SSO requirements.
