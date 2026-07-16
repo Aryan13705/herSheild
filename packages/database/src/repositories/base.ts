@@ -13,13 +13,13 @@ export class BaseRepository<
   constructor(protected readonly table: TTable) {}
 
   async findById(id: string): Promise<TSelect | undefined> {
-    const results = await db.select().from(this.table).where(eq((this.table as any).id, id));
+    const results = await db.select().from(this.table as any).where(eq((this.table as any).id, id));
     return results[0] as TSelect | undefined;
   }
 
   async findMany(ids: string[]): Promise<TSelect[]> {
     if (ids.length === 0) return [];
-    const results = await db.select().from(this.table).where(inArray((this.table as any).id, ids));
+    const results = await db.select().from(this.table as any).where(inArray((this.table as any).id, ids));
     return results as TSelect[];
   }
 

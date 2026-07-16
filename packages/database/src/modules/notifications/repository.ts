@@ -9,9 +9,9 @@ export class NotificationRepository extends BaseRepository<typeof notifications,
   }
 
   async getUnreadForUser(userId: string) {
-    return db.select().from(this.table).where(
-      eq(this.table.userId, userId)
-    ).where(eq(this.table.isRead, false));
+    return db.select().from(this.table as any).where(
+      and(eq((this.table as any).userId, userId), eq((this.table as any).isRead, false))
+    );
   }
 }
 

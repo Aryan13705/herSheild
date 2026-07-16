@@ -9,9 +9,9 @@ export class SafetyRepository extends BaseRepository<typeof safetyIncidents, typ
   }
 
   async getActiveIncidents(userId: string) {
-    return db.select().from(this.table).where(
-      eq(this.table.userId, userId)
-    ).where(eq(this.table.status, "ACTIVE"));
+    return db.select().from(this.table as any).where(
+      and(eq((this.table as any).userId, userId), eq((this.table as any).status, "ACTIVE"))
+    );
   }
 
   async recordLocationPing(data: typeof locationPings.$inferInsert) {
