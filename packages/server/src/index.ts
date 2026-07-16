@@ -1,14 +1,17 @@
-import { Hono } from "hono";
-
-const app = new Hono().basePath("/api/v1");
-
-app.get("/health", (c) => {
-  return c.json({
-    status: "ok",
-    message: "HerShield API is running",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-export type AppType = typeof app;
-export { app };
+export * from "./modules/identity/auth/config";
+export * from "./modules/identity/auth/router";
+export * from "./modules/identity/auth/trpc";
+export * from "./modules/identity/middleware/auth";
+export * from "./modules/identity/middleware/rbac";
+export * from "./modules/identity/services/AuthenticationService";
+export * from "./modules/identity/services/AuthorizationService";
+export * from "./modules/identity/services/IdentityService";
+export * from "./modules/identity/services/SessionService";
+export * from "./modules/identity/services/DeviceService";
+export * from "./modules/identity/services/VerificationService";
+export * from "./modules/identity/services/RecoveryService";
+export * from "./modules/identity/services/SecurityService";
+export * from "./modules/identity/services/AuditService";
+export * from "./modules/identity/types/enums";
+export * from "./modules/identity/events";
+export * from "./modules/identity/cache";

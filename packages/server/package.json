@@ -5,17 +5,20 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
-    "@hershield/database": "workspace:*",
     "@hershield/ai": "workspace:*",
+    "@hershield/database": "workspace:*",
     "@hershield/shared": "workspace:*",
-    "hono": "^4.0.0",
-    "@trpc/server": "^11.0.0-rc.0",
-    "better-auth": "^1.0.0",
-    "zod": "^3.22.4",
-    "pino": "^8.19.0"
+    "@trpc/server": "^11.18.0",
+    "better-auth": "^1.6.23",
+    "hono": "^4.12.30",
+    "pino": "^8.21.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@hershield/config-typescript": "workspace:*",
-    "typescript": "^5.7.0"
+    "@types/node": "^20",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }
