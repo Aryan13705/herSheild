@@ -1,0 +1,16 @@
+{
+  "name": "@hershield/feature-community",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/shared": "workspace:*",
+    "@hershield/ui": "workspace:*",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

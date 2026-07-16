@@ -1,0 +1,21 @@
+{
+  "name": "@hershield/server",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/database": "workspace:*",
+    "@hershield/ai": "workspace:*",
+    "@hershield/shared": "workspace:*",
+    "hono": "^4.0.0",
+    "@trpc/server": "^11.0.0-rc.0",
+    "better-auth": "^1.0.0",
+    "zod": "^3.22.4",
+    "pino": "^8.19.0"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

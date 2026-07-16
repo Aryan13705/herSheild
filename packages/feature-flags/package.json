@@ -1,0 +1,14 @@
+{
+  "name": "@hershield/feature-flags",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

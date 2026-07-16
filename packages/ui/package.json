@@ -1,0 +1,22 @@
+{
+  "name": "@hershield/ui",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/design-system": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "lucide-react": "^0.474.0",
+    "tailwind-merge": "^2.6.0",
+    "clsx": "^2.1.1",
+    "@radix-ui/react-slot": "^1.1.1"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0",
+    "tailwindcss": "4.0.0-beta.8",
+    "@tailwindcss/postcss": "4.0.0-beta.8"
+  }
+}

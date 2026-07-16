@@ -1,0 +1,17 @@
+{
+  "name": "@hershield/ai",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "ai": "^3.0.0",
+    "@ai-sdk/openai": "^0.0.10",
+    "@ai-sdk/anthropic": "^0.0.12",
+    "@ai-sdk/google": "^0.0.13"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}
