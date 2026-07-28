@@ -1,4 +1,4 @@
-import { pgTable, varchar, boolean, inet, text, uuid, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, varchar, boolean, inet, text, uuid, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps, softDelete } from "../../utils/timestamps";
 import { roleEnum, verificationStatusEnum, platformEnum } from "../../enums";
@@ -63,3 +63,29 @@ export const rolePermissions = pgTable("role_permissions", {
 }, (t) => ({
   unq: uniqueIndex("role_perm_unq").on(t.roleId, t.permissionId),
 }));
+
+export const travelPreferences = pgTable("travel_preferences", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  budgetLevel: varchar("budget_level", { length: 50 }),
+  travelStyle: varchar("travel_style", { length: 50 }),
+  interests: jsonb("interests"),
+  accessibilityNeeds: jsonb("accessibility_needs"),
+  preferredTransport: jsonb("preferred_transport"),
+  soloTravelFrequency: varchar("solo_travel_frequency", { length: 50 }),
+  nightTravelComfort: varchar("night_travel_comfort", { length: 50 }),
+  adventureActivities: boolean("adventure_activities").default(false),
+  ...timestamps,
+});
+
+export const savedPlaces = pgTable("saved_places", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  placeId: varchar("place_id", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 50 }), // FAVORITE, WISHLIST, RECENT
+  latitude: varchar("latitude", { length: 50 }),
+  longitude: varchar("longitude", { length: 50 }),
+  notes: text("notes"),
+  ...timestamps,
+});

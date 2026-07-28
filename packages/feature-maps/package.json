@@ -1,0 +1,25 @@
+{
+  "name": "@hershield/feature-maps",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/shared": "workspace:*",
+    "@hershield/ui": "workspace:*",
+    "@turf/turf": "^7.2.0",
+    "@vis.gl/react-google-maps": "^1.9.0",
+    "firebase": "^10.0.0",
+    "lucide-react": "^0.473.0",
+    "mapbox-gl": "^3.9.4",
+    "maplibre-gl": "^3.6.2",
+    "react": "^19.0.0",
+    "react-map-gl": "^7.1.8"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "@types/mapbox-gl": "^3.4.1",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

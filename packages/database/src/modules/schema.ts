@@ -29,3 +29,7 @@ export * from "./analytics/tables";
 
 // Reference
 export * from "./reference/tables";
+
+// Profile
+export * from "./profile/tables";
+export * from "./profile/relations";

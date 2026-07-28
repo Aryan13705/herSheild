@@ -9,7 +9,7 @@
     "@hershield/database": "workspace:*",
     "@hershield/shared": "workspace:*",
     "@trpc/server": "^11.18.0",
-    "better-auth": "^1.6.23",
+    "firebase-admin": "^14.1.0",
     "hono": "^4.12.30",
     "pino": "^8.21.0",
     "zod": "^3.25.76"

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { trips, itineraryDays, itineraryItems, travelJournals, journalEntries, journalMedia } from "./tables";
+import { trips, destinations, tripDestinations, tripPreferences, itineraryDays, itineraryItems, travelJournals, journalEntries, journalMedia } from "./tables";
 import { users } from "../iam/tables";
 
 export const tripsRelations = relations(trips, ({ one, many }) => ({
@@ -7,14 +7,41 @@ export const tripsRelations = relations(trips, ({ one, many }) => ({
     fields: [trips.userId],
     references: [users.id],
   }),
-  days: many(itineraryDays),
+  tripDestinations: many(tripDestinations),
+  preferences: one(tripPreferences, {
+    fields: [trips.id],
+    references: [tripPreferences.tripId],
+  }),
   journals: many(travelJournals),
 }));
 
-export const itineraryDaysRelations = relations(itineraryDays, ({ one, many }) => ({
+export const destinationsRelations = relations(destinations, ({ many }) => ({
+  tripDestinations: many(tripDestinations),
+}));
+
+export const tripDestinationsRelations = relations(tripDestinations, ({ one, many }) => ({
   trip: one(trips, {
-    fields: [itineraryDays.tripId],
+    fields: [tripDestinations.tripId],
     references: [trips.id],
+  }),
+  destination: one(destinations, {
+    fields: [tripDestinations.destinationId],
+    references: [destinations.id],
+  }),
+  days: many(itineraryDays),
+}));
+
+export const tripPreferencesRelations = relations(tripPreferences, ({ one }) => ({
+  trip: one(trips, {
+    fields: [tripPreferences.tripId],
+    references: [trips.id],
+  }),
+}));
+
+export const itineraryDaysRelations = relations(itineraryDays, ({ one, many }) => ({
+  tripDestination: one(tripDestinations, {
+    fields: [itineraryDays.tripDestinationId],
+    references: [tripDestinations.id],
   }),
   items: many(itineraryItems),
 }));

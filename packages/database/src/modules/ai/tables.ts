@@ -68,3 +68,81 @@ export const aiEmbeddings = pgTable("ai_embeddings", {
   embedding: vector("embedding").notNull(),
   ...timestamps,
 });
+
+export const guardianPreferences = pgTable("guardian_preferences", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  voiceEnabled: boolean("voice_enabled").default(false).notNull(),
+  guardianEnabled: boolean("guardian_enabled").default(true).notNull(),
+  notificationLevel: varchar("notification_level", { length: 50 }).default('medium').notNull(),
+  ...timestamps,
+});
+
+export const guardianMemories = pgTable("guardian_memories", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  category: varchar("category", { length: 100 }).notNull(), // e.g., 'hotel', 'food', 'pace'
+  fact: text("fact").notNull(),
+  confidence: numeric("confidence", { precision: 4, scale: 2 }),
+  ...timestamps,
+});
+
+export const guardianInsights = pgTable("guardian_insights", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  period: varchar("period", { length: 50 }).notNull(), // 'daily', 'weekly', 'monthly'
+  summary: text("summary").notNull(),
+  metrics: jsonb("metrics"), // e.g., { avgSafetyScore: 95, distanceWalked: 10.5 }
+  ...timestamps,
+});
+
+export const travelSummaries = pgTable("travel_summaries", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tripId: uuid("trip_id"), 
+  date: varchar("date", { length: 25 }).notNull(),
+  content: text("content").notNull(),
+  achievements: jsonb("achievements"),
+  ...timestamps,
+});
+
+export const recommendations = pgTable("recommendations", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 50 }).notNull(), // 'safety', 'rest', 'charge', 'route'
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  status: varchar("status", { length: 50 }).default('pending').notNull(), // 'pending', 'accepted', 'ignored'
+  context: jsonb("context"),
+  ...timestamps,
+});
+
+export const missionLogs = pgTable("mission_logs", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tripId: uuid("trip_id"),
+  eventType: varchar("event_type", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  severity: varchar("severity", { length: 50 }),
+  metadata: jsonb("metadata"),
+  ...timestamps,
+});
+
+export const weatherEvents = pgTable("weather_events", {
+  id: primaryKey(),
+  locationStr: varchar("location_str", { length: 255 }).notNull(),
+  impact: varchar("impact", { length: 100 }).notNull(), // 'heavy_rain', 'high_uv'
+  recommendation: text("recommendation").notNull(),
+  expiresAt: varchar("expires_at", { length: 50 }),
+  ...timestamps,
+});
+
+export const guardianSessions = pgTable("guardian_sessions", {
+  id: primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 50 }).notNull(), // 'active', 'offline', 'ended'
+  startedAt: varchar("started_at", { length: 50 }).notNull(),
+  endedAt: varchar("ended_at", { length: 50 }),
+  metadata: jsonb("metadata"),
+  ...timestamps,
+});

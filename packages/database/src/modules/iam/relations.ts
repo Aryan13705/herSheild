@@ -1,9 +1,28 @@
 import { relations } from "drizzle-orm";
-import { users, devices, userSessions, roles, permissions, rolePermissions } from "./tables";
+import { users, devices, userSessions, roles, permissions, rolePermissions, travelPreferences, savedPlaces } from "./tables";
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   devices: many(devices),
   sessions: many(userSessions),
+  travelPreferences: one(travelPreferences, {
+    fields: [users.id],
+    references: [travelPreferences.userId],
+  }),
+  savedPlaces: many(savedPlaces),
+}));
+
+export const travelPreferencesRelations = relations(travelPreferences, ({ one }) => ({
+  user: one(users, {
+    fields: [travelPreferences.userId],
+    references: [users.id],
+  }),
+}));
+
+export const savedPlacesRelations = relations(savedPlaces, ({ one }) => ({
+  user: one(users, {
+    fields: [savedPlaces.userId],
+    references: [users.id],
+  }),
 }));
 
 export const devicesRelations = relations(devices, ({ one, many }) => ({

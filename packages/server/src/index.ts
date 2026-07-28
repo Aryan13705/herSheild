@@ -15,3 +15,6 @@ export * from "./modules/identity/services/AuditService";
 export * from "./modules/identity/types/enums";
 export * from "./modules/identity/events";
 export * from "./modules/identity/cache";
+
+export * from "./trpc/init";
+export * from "./trpc/appRouter";

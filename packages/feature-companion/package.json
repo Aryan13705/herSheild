@@ -1,0 +1,19 @@
+{
+  "name": "@hershield/feature-companion",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/ui": "workspace:*",
+    "@hershield/feature-ai": "workspace:*",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^0.474.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

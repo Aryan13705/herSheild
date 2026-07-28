@@ -5,15 +5,18 @@ import * as schema from "./modules/schema";
 const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL environment variable is not set");
+  console.warn("[Database] DATABASE_URL is not set. Database features will be unavailable.");
 }
 
-const sql = neon(databaseUrl);
+// Create a lazy db reference that only errors when actually used
+const sql = databaseUrl ? neon(databaseUrl) : null;
 
-export const db = drizzle(sql, { schema });
+// @ts-ignore - null sql for graceful dev mode without a DB
+export const db = sql ? drizzle(sql, { schema }) : null as any;
 
 // Health check utility
 export async function checkDatabaseHealth(): Promise<boolean> {
+  if (!db) return false;
   try {
     const result = await db.execute('SELECT 1');
     return result.length > 0;

@@ -1,21 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "@hershield/design-system/src/global.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+@source "../../../../packages/ui/src";
+@source "../../../../packages/feature-maps/src";
+@source "../../../../packages/feature-safety/src";
+@source "../../../../packages/feature-companion/src";
+@source "../../../../packages/feature-onboarding/src";
+@source "../layouts";

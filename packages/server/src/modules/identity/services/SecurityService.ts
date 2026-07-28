@@ -10,13 +10,13 @@ export class SecurityService {
     // Basic heuristic: check if there are multiple failed logins in the last 15 minutes
     // In a real startup, we'd query Redis or `system_events` for recent LOGIN_FAILED events
     const recentFailures = await db
-      .select({ count: sql<number>\`count(*)\` })
+      .select({ count: sql<number>`count(*)` })
       .from(schema.systemEvents)
       .where(
         and(
           eq(schema.systemEvents.actorId, userId),
           eq(schema.systemEvents.eventType, "LOGIN_FAILED"),
-          sql\`created_at > now() - interval '15 minutes'\`
+          sql`created_at > now() - interval '15 minutes'`
         )
       );
 

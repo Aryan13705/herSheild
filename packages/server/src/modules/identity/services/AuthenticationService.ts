@@ -6,29 +6,30 @@ export class AuthenticationService {
    * Internal wrapper for triggering authentication checks or 
    * custom logic outside of standard HTTP requests.
    */
-  async validateSession(sessionToken: string, ipAddress: string, userAgent: string) {
-    const session = await auth.api.getSession({
-      headers: new Headers({
-        "cookie": \`better-auth.session_token=\${sessionToken}\`
-      })
-    });
+  async validateSession(idToken: string, ipAddress: string, userAgent: string) {
+    try {
+      const decodedToken = await auth.verifyIdToken(idToken);
+      
+      if (!decodedToken) {
+        return null;
+      }
 
-    if (!session) {
+      // Suspicious login / token theft detection check
+      const isSuspicious = await securityService.detectSuspiciousLogin(
+        decodedToken.uid, 
+        ipAddress, 
+        userAgent
+      );
+
+      if (isSuspicious) {
+        // Potentially force MFA or block
+      }
+
+      return decodedToken;
+    } catch (error) {
+      console.error("Error verifying Firebase ID token:", error);
       return null;
     }
-
-    // Suspicious login / token theft detection check
-    const isSuspicious = await securityService.detectSuspiciousLogin(
-      session.user.id, 
-      ipAddress, 
-      userAgent
-    );
-
-    if (isSuspicious) {
-      // Potentially force MFA or block
-    }
-
-    return session;
   }
 }
 

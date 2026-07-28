@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["@hershield/ui", "@hershield/design-system"],
 };
 
 export default nextConfig;

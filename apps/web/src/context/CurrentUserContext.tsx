@@ -1,0 +1,117 @@
+"use client";
+
+import * as React from "react";
+import { auth } from "../lib/auth-client";
+import { onAuthStateChanged, User } from "firebase/auth";
+
+export type OnboardingStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+
+export interface CurrentUser {
+  id: string;
+  email: string;
+  name: string;
+  role: "USER" | "ADMIN" | "GUARDIAN";
+  permissions: string[];
+  onboardingStatus: OnboardingStatus;
+  preferences: {
+    theme: "light" | "dark" | "system";
+    notifications: boolean;
+    locationSharing: "always" | "while_using" | "never";
+  };
+}
+
+interface CurrentUserContextType {
+  user: CurrentUser | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetchUser: () => Promise<void>;
+}
+
+const CurrentUserContext = React.createContext<CurrentUserContextType | undefined>(undefined);
+
+export function CurrentUserProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: CurrentUser | null;
+}) {
+  const [firebaseUser, setFirebaseUser] = React.useState<User | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<Error | null>(null);
+
+  React.useEffect(() => {
+    // If we're using a stub API key, Firebase will never resolve onAuthStateChanged.
+    // We must forcefully bypass it so the app doesn't hang on the loading screen forever.
+    const isStubbed = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes('stub');
+    
+    if (isStubbed) {
+      console.warn("Using stubbed Firebase config. Bypassing auth state.");
+      setFirebaseUser({ uid: "stub-user", email: "test@hershield.app", displayName: "Test User" } as User);
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setFirebaseUser(user);
+      setIsLoading(false);
+    }, (err) => {
+      setError(err);
+      setIsLoading(false);
+    });
+
+    // Fallback timeout just in case Firebase hangs on a bad network connection
+    const timeoutId = setTimeout(() => {
+      if (isLoading) {
+        console.warn("Firebase auth timed out. Forcing load completion.");
+        setIsLoading(false);
+      }
+    }, 2500);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeoutId);
+    };
+  }, [isLoading]);
+
+  // Map Firebase user to our CurrentUser type
+  const user = React.useMemo<CurrentUser | null>(() => {
+    if (!firebaseUser) return initialUser;
+    
+    return {
+      id: firebaseUser.uid,
+      email: firebaseUser.email || "",
+      name: firebaseUser.displayName || "",
+      // Mocking missing fields since we haven't fetched from our DB yet
+      role: "USER",
+      permissions: [],
+      onboardingStatus: "NOT_STARTED",
+      preferences: {
+        theme: "system",
+        notifications: true,
+        locationSharing: "while_using"
+      }
+    };
+  }, [firebaseUser, initialUser]);
+
+  const refetchUser = React.useCallback(async () => {
+    // With Firebase, the SDK automatically manages the session, but we can force a token refresh if needed
+    if (auth.currentUser) {
+      await auth.currentUser.getIdToken(true);
+    }
+  }, []);
+
+  return (
+    <CurrentUserContext.Provider value={{ user, isLoading, error, refetchUser }}>
+      {children}
+    </CurrentUserContext.Provider>
+  );
+}
+
+export function useCurrentUser() {
+  const context = React.useContext(CurrentUserContext);
+  if (context === undefined) {
+    throw new Error("useCurrentUser must be used within a CurrentUserProvider");
+  }
+  return context;
+}

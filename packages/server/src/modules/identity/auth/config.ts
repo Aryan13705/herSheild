@@ -1,51 +1,45 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db, schema } from "@hershield/database";
-import { identityService } from "../services/IdentityService";
-import { sessionService } from "../services/SessionService";
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { readFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 
-export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: "pg",
-    schema: {
-      // Map Better Auth's expected internal schema to our highly customized database
-      user: schema.users,
-      session: schema.userSessions,
-      // account and verification tables can map to standard tables or be added to iam schema. 
-      // Assuming drizzleAdapter handles creation if they don't exist, or we can use generic names.
-    }
-  }),
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-  },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }
-  },
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
-  },
-  databaseHooks: {
-    user: {
-      create: {
-        after: async (user) => {
-          // Initialize identity components in a pseudo-transaction hook
-          await identityService.initializeIdentity(user.id, user.email);
-        }
+function loadServiceAccount() {
+  // Try all possible paths where the service account key might live
+  const candidatePaths = [
+    resolve(process.cwd(), 'firebase-service-account.json'),
+    resolve(process.cwd(), '../../firebase-service-account.json'),
+    resolve(process.cwd(), '../../packages/server/firebase-service-account.json'),
+    resolve(__dirname, '../../../../../firebase-service-account.json'),
+  ];
+
+  for (const p of candidatePaths) {
+    try {
+      if (existsSync(p)) {
+        const parsed = JSON.parse(readFileSync(p, 'utf8'));
+        console.log('[Firebase Admin] Loaded service account from:', p);
+        return parsed;
       }
-    },
-    session: {
-      create: {
-        after: async (session) => {
-          // Better auth handles the session insertion natively, 
-          // we use this hook to sync to our cache and trigger audit logs.
-          await sessionService.syncSession(session.token, session.userId);
-        }
-      }
-    }
+    } catch (_) {}
   }
-});
+
+  console.warn('[Firebase Admin] No service account file found. Using GOOGLE_APPLICATION_CREDENTIALS or falling back to mock auth.');
+  return null;
+}
+
+if (!getApps().length) {
+  const serviceAccount = loadServiceAccount();
+  try {
+    initializeApp({
+      credential: serviceAccount ? cert(serviceAccount) : undefined,
+    });
+  } catch (e) {
+    // If no credential at all, init with project ID only for emulator mode
+    console.warn('[Firebase Admin] initializeApp failed, initializing without credentials for dev.', e);
+    try {
+      initializeApp({ projectId: 'hershield-4985d' });
+    } catch (_) {}
+  }
+}
+
+export const auth = getAuth();
+

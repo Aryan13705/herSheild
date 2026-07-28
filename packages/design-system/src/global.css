@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@theme {
+  /* ── Brand: HerShield OS (Shared) ── */
+  --color-brand-primary: #9D4EDD;     /* Electric Purple */
+  --color-brand-primary-hover: #7B2CBF;
+  --color-brand-secondary: #FF007F;   /* Neon Pink */
+  --color-brand-tertiary: #00F0FF;    /* Guardian Cyan */
+
+  /* ── Safety Status Colors (Shared) ── */
+  --color-safety-safe: #00FF9D;       /* Emerald Safe */
+  --color-safety-safe-bg: rgba(0, 255, 157, 0.12);
+  --color-safety-warning: #FBBF24;    /* Amber Warning */
+  --color-safety-warning-bg: rgba(251, 191, 36, 0.12);
+  --color-safety-danger: #FF3B30;     /* Crimson Emergency */
+  --color-safety-danger-bg: rgba(255, 59, 48, 0.12);
+  --color-safety-danger-hover: #D70015;
+
+  /* ── Light HUD Surfaces (Unused mostly but required for fallback) ── */
+  --color-surface-bg: #060816;
+  --color-surface-card: #0A0D23;
+  --color-surface-card-hover: #12163B;
+  --color-surface-elevated: #161C4C;
+  --color-surface-glass: rgba(6, 8, 22, 0.4);
+
+  /* ── Text ── */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #8B94B5;
+  --color-text-tertiary: #4B5277;
+  --color-text-inverse: #060816;
+
+  /* ── Borders ── */
+  --color-border-subtle: rgba(0, 240, 255, 0.1);
+  --color-border-medium: rgba(0, 240, 255, 0.25);
+
+  /* ── Typography ── */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* ── Spacing ── */
+  --spacing-touch: 3rem;
+
+  /* ── Radii ── */
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 3rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows (Depth System) ── */
+  --shadow-glow-purple: 0 0 32px rgba(157, 78, 221, 0.4);
+  --shadow-glow-cyan: 0 0 32px rgba(0, 240, 255, 0.4);
+  --shadow-glow-pink: 0 0 32px rgba(255, 0, 127, 0.4);
+  --shadow-elevation-1: 0 4px 16px rgba(0,0,0,0.15);
+  --shadow-elevation-2: 0 12px 32px rgba(0,0,0,0.25);
+  --shadow-elevation-3: 0 24px 48px rgba(0,0,0,0.35);
+  --shadow-elevation-modal: 0 40px 80px rgba(0,0,0,0.5);
+
+  /* ── Icon Sizing ── */
+  --size-icon-sm: 1rem;
+  --size-icon-md: 1.5rem;
+  --size-icon-lg: 2rem;
+  --size-icon-xl: 3rem;
+
+  /* ── Motion ── */
+  --ease-spring: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 220ms;
+  --duration-slow: 380ms;
+
+  /* ── Animations ── */
+  --animate-breathe: breathe 4s ease-in-out infinite;
+  --animate-pulse-cyan: pulseCyan 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-radar: radar 3s linear infinite;
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); }
+    50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 40px rgba(0, 240, 255, 0.8), 0 0 80px rgba(157, 78, 221, 0.6); }
+  }
+
+  @keyframes pulseCyan {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+  }
+
+  @keyframes radar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+@layer base {
+  :root {
+    background-color: var(--color-surface-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .dark {
+    /* ── Deep Space HUD Surfaces ── */
+    --color-surface-bg: #060816;
+    --color-surface-card: #0A0D23;
+    --color-surface-card-hover: #12163B;
+    --color-surface-elevated: #161C4C;
+    --color-surface-glass: rgba(6, 8, 22, 0.5);
+
+    /* ── Text ── */
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #8B94B5;
+    --color-text-tertiary: #4B5277;
+    --color-text-inverse: #060816;
+
+    /* ── Borders ── */
+    --color-border-subtle: rgba(0, 240, 255, 0.15);
+    --color-border-medium: rgba(0, 240, 255, 0.3);
+
+    color-scheme: dark;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    min-height: 100vh;
+    overscroll-behavior-y: none;
+  }
+
+  * { box-sizing: border-box; }
+}
+
+@layer utilities {
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8537A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080B14];
+  }
+
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
