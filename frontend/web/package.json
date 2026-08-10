@@ -1,0 +1,43 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hershield/design-system": "workspace:^",
+    "@hershield/feature-maps": "workspace:*",
+    "@hershield/feature-safety": "workspace:*",
+    "@hershield/feature-companion": "workspace:*",
+    "@hershield/feature-onboarding": "workspace:*",
+    "@hershield/server": "workspace:^",
+    "@hershield/ui": "workspace:^",
+    "@tanstack/react-query": "^5.101.2",
+    "@trpc/client": "^11.18.0",
+    "@trpc/react-query": "^11.18.0",
+    "@trpc/server": "^11.18.0",
+    "firebase": "^12.16.0",
+    "lucide-react": "^0.474.0",
+    "mapbox-gl": "^3.26.0",
+    "next": "15.0.0",
+    "next-themes": "^0.4.6",
+    "react": "19.0.0-rc-65a56d0e-20241020",
+    "react-dom": "19.0.0-rc-65a56d0e-20241020",
+    "react-map-gl": "^8.1.1",
+    "@hershield/mission-map": "workspace:*"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5"
+  }
+}

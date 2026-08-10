@@ -1,0 +1,24 @@
+{
+  "name": "@hershield/mission-map",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@hershield/shared": "workspace:*",
+    "@hershield/ui": "workspace:*",
+    "@turf/turf": "^7.2.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.473.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@hershield/config-typescript": "workspace:*",
+    "@types/leaflet": "^1.9.16",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}
