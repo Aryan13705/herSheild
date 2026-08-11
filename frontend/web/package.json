@@ -28,7 +28,8 @@
     "react": "19.0.0-rc-65a56d0e-20241020",
     "react-dom": "19.0.0-rc-65a56d0e-20241020",
     "react-map-gl": "^8.1.1",
-    "@hershield/mission-map": "workspace:*"
+    "@hershield/mission-map": "workspace:*",
+    "@hershield/feature-offline": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",

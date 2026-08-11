@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, initializeAuth, browserSessionPersistence, browserPopupRedirectResolver } from "firebase/auth";
 
 // Replace with your actual Firebase config or use environment variables
 const firebaseConfig = {
@@ -13,7 +13,25 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
+
+let auth;
+if (typeof window !== "undefined") {
+  // In development/client, initialize auth without IndexedDB to prevent "Database is closing/hidden"
+  try {
+    auth = initializeAuth(app, {
+      persistence: browserSessionPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver,
+    });
+  } catch (e: any) {
+    // If already initialized (e.g., during fast refresh), get the existing auth instance
+    auth = getAuth(app);
+  }
+} else {
+  // Server-side
+  auth = getAuth(app);
+}
+
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut };

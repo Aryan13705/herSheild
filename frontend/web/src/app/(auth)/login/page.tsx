@@ -101,6 +101,7 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
     } catch (err: any) {
+      console.error("Login error:", err);
       setError("Authorization failed.");
     } finally { setLoading(false); }
   };
@@ -111,6 +112,7 @@ export default function LoginPage() {
       await signInWithPopup(auth, googleProvider);
       router.push("/dashboard");
     } catch (err: any) {
+      console.error("Google Login error:", err);
       setError("Authorization failed.");
     } finally { setGoogleLoading(false); }
   };

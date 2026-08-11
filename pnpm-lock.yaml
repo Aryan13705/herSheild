@@ -660,6 +660,9 @@ importers:
       '@hershield/feature-maps':
         specifier: workspace:*
         version: link:../packages/feature-maps
+      '@hershield/feature-offline':
+        specifier: workspace:*
+        version: link:../packages/feature-offline
       '@hershield/feature-onboarding':
         specifier: workspace:*
         version: link:../packages/feature-onboarding

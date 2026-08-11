@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @import "@hershield/design-system/src/global.css";
 
-@source "../../../../packages/ui/src";
-@source "../../../../packages/feature-maps/src";
-@source "../../../../packages/feature-safety/src";
-@source "../../../../packages/feature-companion/src";
-@source "../../../../packages/feature-onboarding/src";
+@source "../../../packages/ui/src";
+@source "../../../packages/feature-maps/src";
+@source "../../../packages/feature-safety/src";
+@source "../../../packages/feature-companion/src";
+@source "../../../packages/feature-onboarding/src";
+@source "../../../packages/feature-dashboard/src";
 @source "../layouts";
