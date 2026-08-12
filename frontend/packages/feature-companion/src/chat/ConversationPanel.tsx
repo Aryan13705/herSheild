@@ -5,41 +5,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCompanion } from '../context/CompanionContext';
 import { ChevronDown, Send } from 'lucide-react';
 import { Card } from '@hershield/ui';
+import { useChat } from '@ai-sdk/react';
 
 export const ConversationPanel = () => {
   const { companionMode, closeCompanion, orbState, setOrbState } = useCompanion();
-  const [messages, setMessages] = useState<{role: 'user'|'ai', content: string}[]>([
-    { role: 'ai', content: "Hello! I'm monitoring your route and weather. How can I assist you today?" }
-  ]);
-  const [input, setInput] = useState('');
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    api: '/api/chat',
+    initialMessages: [
+      { id: '1', role: 'assistant', content: "Hello! I'm monitoring your route and weather. How can I assist you today?" }
+    ],
+    onResponse: () => setOrbState('safe'),
+  });
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: 'user', content: input }]);
-    setInput('');
-    setOrbState('thinking');
-    
-    setTimeout(() => {
-      const normalizedInput = input.toLowerCase();
-      let reply = "I'm analyzing the safest routes. I've noted heavy rainfall warnings in that region for the next 48 hours. I'll keep your emergency contacts on standby.";
-      
-      if (normalizedInput.includes('kerala') || normalizedInput.includes('kerela')) {
-         reply = "Kerala is a beautiful destination! However, the Western Ghats region is currently experiencing heavy monsoon showers. I will proactively cache offline maps for Munnar and Wayanad, and monitor landslide warnings along your route.";
-      } else if (normalizedInput.includes('itinerary') || normalizedInput.includes('itenary') || normalizedInput.includes('plan')) {
-         reply = "Here is a safe itinerary suggestion:\n\nDay 1: Arrive in Kochi. Stay in fort area (low flood risk).\nDay 2: Travel to Munnar before 2 PM to avoid evening fog on the ghat roads.\nDay 3: Backwaters in Alleppey. I have verified the boat operators for safety compliance.\n\nWould you like me to book any of these safe transit options?";
-      } else if (normalizedInput.includes('weather') || normalizedInput.includes('rain')) {
-         reply = "Currently, there is a 85% chance of heavy thunderstorms along your path. I highly recommend delaying travel by 2 hours. Should I notify your emergency contacts of the delay?";
-      }
-
-      setMessages(prev => [...prev, { role: 'ai', content: reply }]);
+  useEffect(() => {
+    if (isLoading) {
+      setOrbState('thinking');
+    } else {
       setOrbState('safe');
-    }, 1500);
-  };
+    }
+  }, [isLoading, setOrbState]);
 
   return (
     <AnimatePresence>
@@ -93,23 +82,23 @@ export const ConversationPanel = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-white/5 bg-black/40">
+            <form onSubmit={handleSubmit} className="p-4 border-t border-white/5 bg-black/40">
               <div className="relative flex items-center">
                 <input 
                   type="text" 
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  onChange={handleInputChange}
                   placeholder="Ask Guardian..." 
                   className="w-full bg-white/10 border border-white/10 rounded-full py-3 px-4 text-white text-sm focus:outline-none focus:border-[var(--color-brand-tertiary)] focus:ring-1 focus:ring-[var(--color-brand-tertiary)] transition-all placeholder-gray-500 pr-12"
                 />
                 <button 
-                  onClick={handleSend}
-                  className="absolute right-1.5 p-2 bg-[var(--color-brand-tertiary)] text-[var(--color-surface-bg)] rounded-full hover:scale-105 transition-transform">
+                  type="submit"
+                  disabled={isLoading}
+                  className="absolute right-1.5 p-2 bg-[var(--color-brand-tertiary)] text-[var(--color-surface-bg)] rounded-full hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100">
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </form>
           </Card>
         </motion.div>
       )}

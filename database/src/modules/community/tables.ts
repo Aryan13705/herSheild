@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, text, integer, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps, softDelete } from "../../utils/timestamps";
 import { users } from "../iam/tables";
@@ -12,7 +12,9 @@ export const posts = pgTable("posts", {
   likesCount: integer("likes_count").default(0).notNull(),
   ...timestamps,
   ...softDelete,
-});
+}, (t) => ({
+  userIdIdx: index("posts_user_id_idx").on(t.userId),
+}));
 
 export const comments = pgTable("comments", {
   id: primaryKey(),
@@ -22,7 +24,10 @@ export const comments = pgTable("comments", {
   likesCount: integer("likes_count").default(0).notNull(),
   ...timestamps,
   ...softDelete,
-});
+}, (t) => ({
+  postIdIdx: index("comments_post_id_idx").on(t.postId),
+  userIdIdx: index("comments_user_id_idx").on(t.userId),
+}));
 
 export const reviews = pgTable("reviews", {
   id: primaryKey(),
@@ -33,4 +38,7 @@ export const reviews = pgTable("reviews", {
   content: text("content"),
   ...timestamps,
   ...softDelete,
-});
+}, (t) => ({
+  userIdIdx: index("reviews_user_id_idx").on(t.userId),
+  targetIdIdx: index("reviews_target_id_idx").on(t.targetId),
+}));

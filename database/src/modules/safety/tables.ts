@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, text, numeric, geometry, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, text, numeric, geometry, jsonb, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps, softDelete } from "../../utils/timestamps";
 import {
@@ -25,7 +25,9 @@ export const safetyIncidents = pgTable("safety_incidents", {
   resolvedAt: timestamps.updatedAt,
   ...timestamps,
   ...softDelete,
-});
+}, (t) => ({
+  userIdIdx: index("safety_incidents_user_id_idx").on(t.userId),
+}));
 
 export const locationPings = pgTable("location_pings", {
   id: primaryKey(),
@@ -35,7 +37,11 @@ export const locationPings = pgTable("location_pings", {
   batteryLevel: numeric("battery_level"),
   networkStatus: varchar("network_status", { length: 50 }),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("location_pings_user_id_idx").on(t.userId),
+  incidentIdIdx: index("location_pings_incident_id_idx").on(t.incidentId),
+  geomIdx: index("location_pings_geom_idx").using("gist", t.geom),
+}));
 
 export const sosEvidence = pgTable("sos_evidence", {
   id: primaryKey(),
@@ -45,7 +51,9 @@ export const sosEvidence = pgTable("sos_evidence", {
   transcript: text("transcript"),
   metadata: jsonb("metadata"),
   ...timestamps,
-});
+}, (t) => ({
+  incidentIdIdx: index("sos_evidence_incident_id_idx").on(t.incidentId),
+}));
 
 export const locationSafetyScores = pgTable("location_safety_scores", {
   id: primaryKey(),
@@ -54,7 +62,9 @@ export const locationSafetyScores = pgTable("location_safety_scores", {
   confidenceLevel: numeric("confidence_level"),
   source: varchar("source", { length: 100 }), // AI, CROWDSOURCE, OFFICIAL
   ...timestamps,
-});
+}, (t) => ({
+  geomIdx: index("location_safety_scores_geom_idx").using("gist", t.geom),
+}));
 
 export const guardians = pgTable("guardians", {
   id: primaryKey(),
@@ -65,7 +75,10 @@ export const guardians = pgTable("guardians", {
   email: varchar("email", { length: 255 }),
   status: varchar("status", { length: 50 }).default("PENDING").notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("guardians_user_id_idx").on(t.userId),
+  guardianUserIdIdx: index("guardians_guardian_user_id_idx").on(t.guardianUserId),
+}));
 
 export const guardianSessions = pgTable("guardian_sessions", {
   id: primaryKey(),
@@ -73,7 +86,10 @@ export const guardianSessions = pgTable("guardian_sessions", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   expiresAt: timestamps.createdAt.notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  guardianIdIdx: index("guardian_sessions_guardian_id_idx").on(t.guardianId),
+  userIdIdx: index("guardian_sessions_user_id_idx").on(t.userId),
+}));
 
 export const emergencyContacts = pgTable("emergency_contacts", {
   id: primaryKey(),
@@ -86,7 +102,9 @@ export const emergencyContacts = pgTable("emergency_contacts", {
   preferredMethod: varchar("preferred_method", { length: 50 }).default("PHONE").notNull(),
   notes: text("notes"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("emergency_contacts_user_id_idx").on(t.userId),
+}));
 
 export const emergencyCards = pgTable("emergency_cards", {
   id: primaryKey(),
@@ -121,7 +139,9 @@ export const safetyCheckins = pgTable("safety_checkins", {
   confirmedAt: timestamps.updatedAt,
   location: geometry("location", { type: "point", mode: "tuple", srid: 4326 }),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("safety_checkins_user_id_idx").on(t.userId),
+}));
 
 export const safetyReports = pgTable("safety_reports", {
   id: primaryKey(),
@@ -132,7 +152,10 @@ export const safetyReports = pgTable("safety_reports", {
   location: geometry("location", { type: "point", mode: "tuple", srid: 4326 }).notNull(),
   reportedAt: timestamps.createdAt.notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("safety_reports_user_id_idx").on(t.userId),
+  geomIdx: index("safety_reports_geom_idx").using("gist", t.location),
+}));
 
 export const cachedSafetyLocations = pgTable("cached_safety_locations", {
   id: primaryKey(),
@@ -149,7 +172,9 @@ export const safetyNotifications = pgTable("safety_notifications", {
   payload: jsonb("payload"),
   readAt: timestamps.updatedAt,
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("safety_notifications_user_id_idx").on(t.userId),
+}));
 
 export const emergencyEvents = pgTable("emergency_events", {
   id: primaryKey(),
@@ -158,7 +183,9 @@ export const emergencyEvents = pgTable("emergency_events", {
   triggeredAt: timestamps.createdAt.notNull(),
   resolvedAt: timestamps.updatedAt,
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("emergency_events_user_id_idx").on(t.userId),
+}));
 
 export const permissionHistory = pgTable("permission_history", {
   id: primaryKey(),
@@ -167,7 +194,9 @@ export const permissionHistory = pgTable("permission_history", {
   status: permissionStatusEnum("status").notNull(),
   lastUpdated: timestamps.updatedAt,
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("permission_history_user_id_idx").on(t.userId),
+}));
 
 export const safetyScores = pgTable("safety_scores", {
   id: primaryKey(),

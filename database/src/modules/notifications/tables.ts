@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, text, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, text, integer, boolean, jsonb, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps } from "../../utils/timestamps";
 import { notificationTypeEnum, notificationStatusEnum } from "../../enums";
@@ -13,7 +13,9 @@ export const notifications = pgTable("notifications", {
   isRead: boolean("is_read").default(false).notNull(),
   metadata: jsonb("metadata"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("notifications_user_id_idx").on(t.userId),
+}));
 
 export const notificationJobs = pgTable("notification_jobs", {
   id: primaryKey(),
@@ -22,7 +24,9 @@ export const notificationJobs = pgTable("notification_jobs", {
   status: notificationStatusEnum("status").default("PENDING").notNull(),
   retryCount: integer("retry_count").default(0).notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  notificationIdIdx: index("notification_jobs_notification_id_idx").on(t.notificationId),
+}));
 
 export const notificationLogs = pgTable("notification_logs", {
   id: primaryKey(),
@@ -30,4 +34,6 @@ export const notificationLogs = pgTable("notification_logs", {
   status: notificationStatusEnum("status").notNull(),
   providerResponse: text("provider_response"),
   ...timestamps,
-});
+}, (t) => ({
+  jobIdIdx: index("notification_logs_job_id_idx").on(t.jobId),
+}));

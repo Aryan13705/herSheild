@@ -1,4 +1,4 @@
-import { pgTable, varchar, date, uuid, text, integer, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, varchar, date, uuid, text, integer, jsonb, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps, softDelete } from "../../utils/timestamps";
 import { tripStatusEnum, travelModeEnum } from "../../enums";
@@ -17,7 +17,9 @@ export const trips = pgTable("trips", {
   travelMode: travelModeEnum("travel_mode").default("SOLO").notNull(),
   ...timestamps,
   ...softDelete,
-});
+}, (t) => ({
+  userIdIdx: index("trips_user_id_idx").on(t.userId),
+}));
 
 export const destinations = pgTable("destinations", {
   id: primaryKey(),
@@ -27,7 +29,9 @@ export const destinations = pgTable("destinations", {
   longitude: varchar("longitude", { length: 50 }),
   placeId: varchar("place_id", { length: 255 }),
   ...timestamps,
-});
+}, (t) => ({
+  countryIdIdx: index("destinations_country_id_idx").on(t.countryId),
+}));
 
 export const tripDestinations = pgTable("trip_destinations", {
   id: primaryKey(),
@@ -37,7 +41,10 @@ export const tripDestinations = pgTable("trip_destinations", {
   startDate: date("start_date"),
   endDate: date("end_date"),
   ...timestamps,
-});
+}, (t) => ({
+  tripIdIdx: index("trip_destinations_trip_id_idx").on(t.tripId),
+  destinationIdIdx: index("trip_destinations_destination_id_idx").on(t.destinationId),
+}));
 
 export const tripPreferences = pgTable("trip_preferences", {
   id: primaryKey(),
@@ -57,7 +64,9 @@ export const itineraryDays = pgTable("itinerary_days", {
   title: varchar("title", { length: 255 }),
   notes: text("notes"),
   ...timestamps,
-});
+}, (t) => ({
+  tripDestinationIdIdx: index("itinerary_days_trip_destination_id_idx").on(t.tripDestinationId),
+}));
 
 export const itineraryItems = pgTable("itinerary_items", {
   id: primaryKey(),
@@ -72,7 +81,9 @@ export const itineraryItems = pgTable("itinerary_items", {
   location: varchar("location", { length: 255 }),
   metadata: jsonb("metadata"),
   ...timestamps,
-});
+}, (t) => ({
+  dayIdIdx: index("itinerary_items_day_id_idx").on(t.dayId),
+}));
 
 export const travelJournals = pgTable("travel_journals", {
   id: primaryKey(),
@@ -81,7 +92,10 @@ export const travelJournals = pgTable("travel_journals", {
   title: varchar("title", { length: 255 }).notNull(),
   visibility: varchar("visibility", { length: 50 }).default("PRIVATE").notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("travel_journals_user_id_idx").on(t.userId),
+  tripIdIdx: index("travel_journals_trip_id_idx").on(t.tripId),
+}));
 
 export const journalEntries = pgTable("journal_entries", {
   id: primaryKey(),
@@ -90,7 +104,9 @@ export const journalEntries = pgTable("journal_entries", {
   content: text("content").notNull(),
   aiSummary: text("ai_summary"),
   ...timestamps,
-});
+}, (t) => ({
+  journalIdIdx: index("journal_entries_journal_id_idx").on(t.journalId),
+}));
 
 export const journalMedia = pgTable("journal_media", {
   id: primaryKey(),
@@ -98,4 +114,6 @@ export const journalMedia = pgTable("journal_media", {
   fileUrl: varchar("file_url", { length: 2048 }).notNull(),
   mediaType: varchar("media_type", { length: 50 }).notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  entryIdIdx: index("journal_media_entry_id_idx").on(t.entryId),
+}));

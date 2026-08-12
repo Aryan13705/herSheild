@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, text, integer, numeric, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, text, integer, numeric, boolean, jsonb, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps } from "../../utils/timestamps";
 import { users } from "../iam/tables";
@@ -20,7 +20,9 @@ export const aiConversations = pgTable("ai_conversations", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("ai_conversations_user_id_idx").on(t.userId),
+}));
 
 export const aiMessages = pgTable("ai_messages", {
   id: primaryKey(),
@@ -28,7 +30,9 @@ export const aiMessages = pgTable("ai_messages", {
   role: varchar("role", { length: 50 }).notNull(), // user, assistant, system
   content: text("content").notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  conversationIdIdx: index("ai_messages_conversation_id_idx").on(t.conversationId),
+}));
 
 export const aiUsage = pgTable("ai_usage", {
   id: primaryKey(),
@@ -40,7 +44,9 @@ export const aiUsage = pgTable("ai_usage", {
   latencyMs: integer("latency_ms"),
   estimatedCost: numeric("estimated_cost", { precision: 10, scale: 6 }),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("ai_usage_user_id_idx").on(t.userId),
+}));
 
 export const aiPromptTemplates = pgTable("ai_prompt_templates", {
   id: primaryKey(),
@@ -59,7 +65,9 @@ export const aiFeedback = pgTable("ai_feedback", {
   reportReason: varchar("report_reason", { length: 255 }),
   comments: text("comments"),
   ...timestamps,
-});
+}, (t) => ({
+  conversationIdIdx: index("ai_feedback_conversation_id_idx").on(t.conversationId),
+}));
 
 export const aiEmbeddings = pgTable("ai_embeddings", {
   id: primaryKey(),
@@ -76,7 +84,9 @@ export const guardianMemories = pgTable("guardian_memories", {
   fact: text("fact").notNull(),
   confidence: numeric("confidence", { precision: 4, scale: 2 }),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("guardian_memories_user_id_idx").on(t.userId),
+}));
 
 export const guardianInsights = pgTable("guardian_insights", {
   id: primaryKey(),
@@ -85,7 +95,9 @@ export const guardianInsights = pgTable("guardian_insights", {
   summary: text("summary").notNull(),
   metrics: jsonb("metrics"), // e.g., { avgSafetyScore: 95, distanceWalked: 10.5 }
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("guardian_insights_user_id_idx").on(t.userId),
+}));
 
 export const travelSummaries = pgTable("travel_summaries", {
   id: primaryKey(),
@@ -95,7 +107,10 @@ export const travelSummaries = pgTable("travel_summaries", {
   content: text("content").notNull(),
   achievements: jsonb("achievements"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("travel_summaries_user_id_idx").on(t.userId),
+  tripIdIdx: index("travel_summaries_trip_id_idx").on(t.tripId),
+}));
 
 export const recommendations = pgTable("recommendations", {
   id: primaryKey(),
@@ -106,7 +121,9 @@ export const recommendations = pgTable("recommendations", {
   status: varchar("status", { length: 50 }).default('pending').notNull(), // 'pending', 'accepted', 'ignored'
   context: jsonb("context"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("recommendations_user_id_idx").on(t.userId),
+}));
 
 export const missionLogs = pgTable("mission_logs", {
   id: primaryKey(),
@@ -117,7 +134,10 @@ export const missionLogs = pgTable("mission_logs", {
   severity: varchar("severity", { length: 50 }),
   metadata: jsonb("metadata"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("mission_logs_user_id_idx").on(t.userId),
+  tripIdIdx: index("mission_logs_trip_id_idx").on(t.tripId),
+}));
 
 export const weatherEvents = pgTable("weather_events", {
   id: primaryKey(),
@@ -136,4 +156,6 @@ export const aiGuardianSessions = pgTable("ai_guardian_sessions", {
   endedAt: varchar("ended_at", { length: 50 }),
   metadata: jsonb("metadata"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("ai_guardian_sessions_user_id_idx").on(t.userId),
+}));

@@ -1,4 +1,4 @@
-import { pgTable, varchar, boolean, inet, text, uuid, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, varchar, boolean, inet, text, uuid, uniqueIndex, jsonb, index } from "drizzle-orm/pg-core";
 import { primaryKey } from "../../utils/uuid";
 import { timestamps, softDelete } from "../../utils/timestamps";
 import { roleEnum, verificationStatusEnum, platformEnum } from "../../enums";
@@ -25,7 +25,9 @@ export const devices = pgTable("devices", {
   pushToken: varchar("push_token", { length: 255 }),
   isTrusted: boolean("is_trusted").default(false).notNull(),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("devices_user_id_idx").on(t.userId),
+}));
 
 export const userSessions = pgTable("user_sessions", {
   id: primaryKey(),
@@ -39,7 +41,10 @@ export const userSessions = pgTable("user_sessions", {
   expiresAt: timestamps.createdAt.notNull(),
   revokedAt: timestamps.createdAt,
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("user_sessions_user_id_idx").on(t.userId),
+  deviceIdIdx: index("user_sessions_device_id_idx").on(t.deviceId),
+}));
 
 export const roles = pgTable("roles", {
   id: primaryKey(),
@@ -62,6 +67,8 @@ export const rolePermissions = pgTable("role_permissions", {
   ...timestamps,
 }, (t) => ({
   unq: uniqueIndex("role_perm_unq").on(t.roleId, t.permissionId),
+  roleIdIdx: index("role_permissions_role_id_idx").on(t.roleId),
+  permissionIdIdx: index("role_permissions_permission_id_idx").on(t.permissionId),
 }));
 
 export const travelPreferences = pgTable("travel_preferences", {
@@ -88,4 +95,6 @@ export const savedPlaces = pgTable("saved_places", {
   longitude: varchar("longitude", { length: 50 }),
   notes: text("notes"),
   ...timestamps,
-});
+}, (t) => ({
+  userIdIdx: index("saved_places_user_id_idx").on(t.userId),
+}));
