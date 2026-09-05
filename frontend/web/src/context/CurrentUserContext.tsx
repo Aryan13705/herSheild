@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { auth, firebaseConfigError, isDemoMode } from "../lib/auth-client";
+import { auth, firebaseConfigError } from "../lib/auth-client";
 import { onAuthStateChanged, User } from "firebase/auth";
 
 export type OnboardingStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
@@ -42,11 +42,7 @@ export function CurrentUserProvider({
 
   React.useEffect(() => {
     if (!auth) {
-      if (isDemoMode) {
-        setFirebaseUser({ uid: "demo-user", email: "demo@hershield.app", displayName: "Demo User" } as User);
-      } else {
-        setError(new Error(firebaseConfigError || "Firebase auth is unavailable."));
-      }
+      setError(new Error(firebaseConfigError || "Firebase auth is unavailable."));
       setIsLoading(false);
       return;
     }

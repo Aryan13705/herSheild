@@ -6,16 +6,14 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
-const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || process.env.DEMO_MODE === 'true';
 const modelName = process.env.GOOGLE_GENERATIVE_AI_MODEL ?? 'models/gemini-1.5-pro-latest';
 
 export async function POST(req: Request) {
   try {
     const authorizationHeader = req.headers.get('authorization');
     const token = authorizationHeader?.startsWith('Bearer ') ? authorizationHeader.slice(7) : null;
-    let userId = 'demo-user-hershield';
 
-    if (!token && !demoMode) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Authentication required for Guardian chat.' },
         { status: 401 },
@@ -36,13 +34,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No messages provided.' }, { status: 400 });
     }
 
-    if (token) {
-      try {
-        const decodedToken = await auth.verifyIdToken(token);
-        userId = decodedToken.uid;
-      } catch {
-        return NextResponse.json({ error: 'Invalid or expired authentication token.' }, { status: 401 });
-      }
+    let userId: string;
+    try {
+      const decodedToken = await auth.verifyIdToken(token);
+      userId = decodedToken.uid;
+    } catch {
+      return NextResponse.json({ error: 'Invalid or expired authentication token.' }, { status: 401 });
     }
 
     const recentMessages = messages.slice(-12);
@@ -63,7 +60,7 @@ export async function POST(req: Request) {
       maxTokens: 700,
     });
 
-    if (db && token) {
+    if (db) {
       void result.response
         .then(async ({ messages: responseMessages }) => {
           const assistantMessage = responseMessages.find((message) => message.role === 'assistant');

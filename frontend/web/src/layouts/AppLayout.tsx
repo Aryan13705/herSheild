@@ -72,7 +72,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500 mb-3">Configuration Error</p>
           <h1 className="text-2xl font-bold text-gray-900 mb-3">Authentication is not configured</h1>
           <p className="text-sm text-gray-600 leading-relaxed mb-6">{error.message}</p>
-          <p className="text-xs text-gray-500">Set the required Firebase environment variables or enable explicit demo mode before continuing.</p>
+          <p className="text-xs text-gray-500">Set the required Firebase environment variables before continuing.</p>
         </div>
       </div>
     );

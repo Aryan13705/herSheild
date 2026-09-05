@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
+import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth, firebaseConfigError } from "../../../lib/auth-client";
 import { AIOrb } from "@hershield/ui";
 
 function getFirebaseAuthErrorMessage(error: unknown) {
@@ -120,7 +120,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) {
-      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Authentication is not configured."));
+      setError(firebaseConfigError || "Authentication is not configured.");
       return;
     }
     if (!email || !password) { setError("Authorization required."); return; }
@@ -136,7 +136,7 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     if (!auth || !googleProvider) {
-      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Google sign-in is not configured."));
+      setError(firebaseConfigError || "Google sign-in is not configured.");
       return;
     }
     setGoogleLoading(true); setError("");
@@ -200,7 +200,7 @@ export default function LoginPage() {
 
           {!auth && (
             <div className="p-3 rounded-xl text-[11px] text-center border border-[var(--color-border-medium)] bg-white/5 text-[var(--color-text-secondary)] tracking-wide">
-              {isDemoMode ? "DEMO MODE ACTIVE" : "Firebase auth is not configured for this environment."}
+              Firebase auth is not configured for this environment.
             </div>
           )}
 

@@ -15,14 +15,11 @@ const firebaseConfig = {
 // Messaging are intentionally not prerequisites for signing a user in.
 const requiredAuthConfigKeys = ["apiKey", "authDomain", "projectId", "appId"] as const;
 const isFirebaseConfigured = requiredAuthConfigKeys.every((key) => Boolean(firebaseConfig[key]));
-const isDemoMode =
-  process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
-  process.env.NODE_ENV !== "production";
 
-export const firebaseConfigError = isFirebaseConfigured || isDemoMode
+export const firebaseConfigError = isFirebaseConfigured
   ? null
   : "Firebase is not configured. Set all NEXT_PUBLIC_FIREBASE_* environment variables.";
-export { isFirebaseConfigured, isDemoMode };
+export { isFirebaseConfigured };
 
 if (typeof window !== "undefined") {
   console.info("[Firebase Auth] Client configuration", {

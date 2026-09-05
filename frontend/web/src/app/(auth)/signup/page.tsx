@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button, Card, CardContent } from "@hershield/ui";
 import { Square, Loader2 } from "lucide-react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
+import { auth, firebaseConfigError } from "../../../lib/auth-client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function SignupPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) {
-      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Authentication is not configured."));
+      setError(firebaseConfigError || "Authentication is not configured.");
       return;
     }
     if (!email || !password || !name || !phone) {
