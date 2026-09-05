@@ -1,0 +1,12 @@
+{
+  "buildCommand": "pnpm turbo build --filter=web",
+  "installCommand": "cd ../.. && pnpm install",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/api/trpc/:path*",
+      "destination": "/api/trpc/:path*"
+    }
+  ]
+}
