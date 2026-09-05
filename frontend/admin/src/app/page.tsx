@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React from 'react';
@@ -5,9 +6,19 @@ import { AlertTriangle, MapPin, Phone, Users, Clock, CheckCircle } from 'lucide-
 import dynamic from 'next/dynamic';
 import { trpc } from '@/lib/trpc';
 
+interface MissionMapProps {
+  center?: [number, number];
+  zoom?: number;
+  markers?: any[];
+  onMarkerClick?: (id: string) => void;
+  onMapClick?: (lat: number, lng: number) => void;
+  className?: string;
+}
+
 // Dynamically import the map component so it doesn't run on the server
-const MissionMap = dynamic(
-  () => import('@hershield/mission-map').then((mod) => mod.MissionMap),
+const MissionMap = dynamic<MissionMapProps>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  () => import('@hershield/mission-map').then((mod) => mod.MissionMap as any) as any,
   { ssr: false, loading: () => <div className="w-full h-full bg-slate-800 animate-pulse rounded-xl flex items-center justify-center text-slate-400">Loading Map...</div> }
 );
 
@@ -85,7 +96,7 @@ export default function AdminDashboard() {
             <MissionMap
               center={[20, 0]}
               zoom={2}
-              markers={activeIncidents.map(inc => ({
+              markers={activeIncidents.map((inc: any) => ({
                 id: inc.id,
                 position: (inc.locationApprox as [number, number]) || [0, 0],
                 title: 'SOS Alert',
@@ -110,7 +121,7 @@ export default function AdminDashboard() {
             ) : activeIncidents.length === 0 ? (
               <div className="text-center text-slate-500 py-10">No active incidents. Systems normal.</div>
             ) : (
-              activeIncidents.map((incident) => (
+              activeIncidents.map((incident: any) => (
                 <div key={incident.id} className="bg-[#0f172a] rounded-xl border border-rose-500/30 p-4 relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
                   

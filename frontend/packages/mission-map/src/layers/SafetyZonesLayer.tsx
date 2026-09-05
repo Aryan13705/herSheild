@@ -18,14 +18,15 @@ const mockZones: SafetyZone[] = [
 ];
 
 export const SafetyZonesLayer: React.FC = React.memo(() => {
-  const activeLayers = useLayerStore((state) => state.activeLayers);
+  const safeZonesActive = useLayerStore((state) => state.activeLayers.safeZones);
+  const riskZonesActive = useLayerStore((state) => state.activeLayers.riskZones);
 
   return (
     <>
       {mockZones.map((zone) => {
         // Filter based on active layers
-        if (zone.type === 'SAFE' && !activeLayers.safeZones) return null;
-        if ((zone.type === 'CAUTION' || zone.type === 'ALERT') && !activeLayers.riskZones) return null;
+        if (zone.type === 'SAFE' && !safeZonesActive) return null;
+        if ((zone.type === 'CAUTION' || zone.type === 'ALERT') && !riskZonesActive) return null;
 
         let color = '#10b981'; // Green for SAFE
         let radius = 12;

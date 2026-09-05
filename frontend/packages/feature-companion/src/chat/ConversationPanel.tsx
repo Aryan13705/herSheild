@@ -7,13 +7,18 @@ import { ChevronDown, Send } from 'lucide-react';
 import { Card } from '@hershield/ui';
 import { useChat } from '@ai-sdk/react';
 
-export const ConversationPanel = () => {
+type ConversationPanelProps = {
+  getAuthHeaders?: () => Promise<Record<string, string>> | Record<string, string>;
+};
+
+export const ConversationPanel = ({ getAuthHeaders }: ConversationPanelProps) => {
   const { companionMode, closeCompanion, orbState, setOrbState } = useCompanion();
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     initialMessages: [
       { id: '1', role: 'assistant', content: "Hello! I'm monitoring your route and weather. How can I assist you today?" }
     ],
+    headers: getAuthHeaders,
     onResponse: () => setOrbState('safe'),
   });
   const endOfMessagesRef = useRef<HTMLDivElement>(null);

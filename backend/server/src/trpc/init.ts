@@ -1,56 +1,78 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { z } from "zod";
 import { auth } from "../modules/identity/auth/config";
 
-type Context = {
-  req: Request;
-  resHeaders: Headers;
+export const createTRPCContext = async (opts: { req: Request }) => {
+  return {
+    req: opts.req,
+    resHeaders: new Headers(),
+  };
 };
 
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<typeof createTRPCContext>().create();
+
+/**
+ * DEMO_MODE: Set DEMO_MODE=true in your environment to enable a named demo user
+ * for local development without Firebase credentials.
+ * NEVER enabled in production (NODE_ENV=production always requires real auth).
+ */
+const DEMO_MODE =
+  process.env.DEMO_MODE === "true" &&
+  process.env.NODE_ENV !== "production";
+
+const DEMO_USER = {
+  id: "demo-user-hershield",
+  name: "Demo User",
+  email: "demo@hershield.app",
+};
 
 export const isAuthed = t.middleware(async ({ ctx, next }) => {
-  const isDev = process.env.NODE_ENV === "development";
   const authHeader = ctx.req.headers.get("authorization");
   const token = authHeader?.split(" ")[1];
-  
-  // In development with no token, use a mock user to unblock UI development
-  if (!token) {
-    if (isDev) {
-      return next({
-        ctx: {
-          user: { id: "mock-user-1", name: "Aanya", email: "aanya@example.com" },
-          session: null,
-        } as any,
-      });
-    }
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  // ── DEMO MODE (explicit opt-in only, never in production) ──────────────────
+  if (!token && DEMO_MODE) {
+    console.warn("[TRPC] DEMO_MODE active — using demo user. Set DEMO_MODE=false for real auth.");
+    return next({
+      ctx: {
+        user: DEMO_USER,
+        session: null,
+      },
+    });
   }
 
+  // ── No token and not in DEMO_MODE ──────────────────────────────────────────
+  if (!token) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "No authorization token provided. Set DEMO_MODE=true for local development without Firebase.",
+    });
+  }
+
+  // ── Verify Firebase token ──────────────────────────────────────────────────
   try {
     const decodedToken = await auth.verifyIdToken(token);
     return next({
       ctx: {
         user: {
           id: decodedToken.uid,
-          email: decodedToken.email || "",
-          name: decodedToken.name || "",
+          email: decodedToken.email ?? "",
+          name: (decodedToken.name as string | undefined) ?? "",
         },
         session: null,
       },
     });
-  } catch (error) {
-    // In development, fall back to mock user even if token verification fails
-    if (isDev) {
-      console.warn("[TRPC] Token verification failed in dev, using mock user.");
+  } catch (_err) {
+    // In DEMO_MODE, allow token verification failures (e.g., Firebase emulator)
+    if (DEMO_MODE) {
+      console.warn("[TRPC] Token verification failed in DEMO_MODE — using demo user.");
       return next({
         ctx: {
-          user: { id: "mock-user-1", name: "Aanya", email: "aanya@example.com" },
+          user: DEMO_USER,
           session: null,
-        } as any,
+        },
       });
     }
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token" });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid or expired token." });
   }
 });
 

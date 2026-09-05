@@ -16,5 +16,9 @@ export * from "./modules/identity/types/enums";
 export * from "./modules/identity/events";
 export * from "./modules/identity/cache";
 
+export { db } from "@hershield/database";
+export { aiConversations, aiMessages } from "@hershield/database";
+
 export * from "./trpc/init";
 export * from "./trpc/appRouter";
+export * from "./app";

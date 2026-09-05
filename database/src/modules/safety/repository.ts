@@ -1,6 +1,6 @@
 import { BaseRepository } from "../../repositories/base";
 import { safetyIncidents, locationPings, sosEvidence } from "./tables";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "../../client";
 
 export class SafetyRepository extends BaseRepository<typeof safetyIncidents, typeof safetyIncidents.$inferInsert, typeof safetyIncidents.$inferSelect> {

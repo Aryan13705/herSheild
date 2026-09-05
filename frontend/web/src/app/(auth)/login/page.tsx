@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth } from "../../../lib/auth-client";
+import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
 import { AIOrb } from "@hershield/ui";
 
 function AICompanionWidget() {
@@ -95,23 +95,31 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) {
+      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Authentication is not configured."));
+      return;
+    }
     if (!email || !password) { setError("Authorization required."); return; }
     setLoading(true); setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login error:", err);
       setError("Authorization failed.");
     } finally { setLoading(false); }
   };
 
   const handleGoogleLogin = async () => {
+    if (!auth || !googleProvider) {
+      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Google sign-in is not configured."));
+      return;
+    }
     setGoogleLoading(true); setError("");
     try {
       await signInWithPopup(auth, googleProvider);
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Google Login error:", err);
       setError("Authorization failed.");
     } finally { setGoogleLoading(false); }
@@ -153,6 +161,12 @@ export default function LoginPage() {
           {error && (
             <div className="p-3 rounded-xl text-xs text-center border border-[var(--color-safety-danger)] bg-[var(--color-safety-danger-bg)] text-[var(--color-safety-danger)] tracking-wide">
               [ ERROR: {error} ]
+            </div>
+          )}
+
+          {!auth && (
+            <div className="p-3 rounded-xl text-[11px] text-center border border-[var(--color-border-medium)] bg-white/5 text-[var(--color-text-secondary)] tracking-wide">
+              {isDemoMode ? "DEMO MODE ACTIVE" : "Firebase auth is not configured for this environment."}
             </div>
           )}
 

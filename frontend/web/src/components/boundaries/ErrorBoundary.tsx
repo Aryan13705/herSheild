@@ -25,7 +25,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    // TODO: Log to tracking service
   }
 
   render() {
@@ -41,7 +40,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </svg>
           </div>
           <h2 className="text-xl font-bold">Something went wrong</h2>
-          <p className="text-[var(--color-text-secondary)]">We're having trouble loading this section.</p>
+          <p className="text-[var(--color-text-secondary)]">We&apos;re having trouble loading this section.</p>
           <Button onClick={() => this.setState({ hasError: false })} variant="secondary">
             Try again
           </Button>

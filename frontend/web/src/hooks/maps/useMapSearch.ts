@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { trpc } from '../../lib/trpc';
-import { useDebounce } from '../useDebounce'; // Assuming there's a useDebounce hook, I'll provide a basic one if not
 
 export function useMapSearch(options?: { proximity?: [number, number]; limit?: number; types?: string }) {
   const [query, setQuery] = useState('');

@@ -29,7 +29,7 @@ export default function NetworkPage() {
           
           <div className="space-y-4">
             <div className="text-center py-8 border-2 border-dashed border-gray-800 rounded-xl">
-              <p className="text-gray-500 mb-2">You haven't added any guardians yet.</p>
+              <p className="text-gray-500 mb-2">You haven&apos;t added any guardians yet.</p>
               <p className="text-sm text-gray-600">Guardians are notified instantly if you trigger an SOS.</p>
             </div>
           </div>

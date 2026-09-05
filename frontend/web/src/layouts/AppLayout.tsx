@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCurrentUser } from "../context/CurrentUserContext";
 import { Shield, Home, Compass, Map, ShieldAlert, Users, BookOpen, Settings } from "lucide-react";
@@ -56,13 +57,26 @@ function SOSBtn({ userId }: { userId: string }) {
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useCurrentUser();
+  const { user, isLoading, error } = useCurrentUser();
 
   React.useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading && !user && !error) {
       router.push("/login");
     }
-  }, [isLoading, user, router]);
+  }, [isLoading, user, error, router]);
+
+  if (error && !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] px-6">
+        <div className="max-w-lg rounded-3xl border border-red-100 bg-white p-8 shadow-xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500 mb-3">Configuration Error</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Authentication is not configured</h1>
+          <p className="text-sm text-gray-600 leading-relaxed mb-6">{error.message}</p>
+          <p className="text-xs text-gray-500">Set the required Firebase environment variables or enable explicit demo mode before continuing.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -96,6 +110,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.name}
                 href={item.href}
+                prefetch={true}
+                viewTransition
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                   isActive ? "bg-[#eef8f1] text-[#34A853]" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                 }`}
@@ -112,8 +128,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <SOSBtn userId={user.id} />
           
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border border-gray-100">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 shrink-0">
-               <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=34A853&color=fff`} alt="Profile" className="w-full h-full object-cover" />
+            <div className="w-10 h-10 rounded-full border border-gray-200 overflow-hidden shrink-0 relative">
+               <Image src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=34A853&color=fff`} alt="Profile" fill className="object-cover" />
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-semibold truncate text-gray-900">{user.name || "User"}</p>

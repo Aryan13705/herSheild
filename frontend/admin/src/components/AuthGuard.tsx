@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { Shield, Activity, Map, Users, LogOut, Bell } from 'lucide-react';
 import { auth } from '@/lib/auth-client';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -73,18 +74,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         </div>
         
         <nav className="flex-1 p-4 flex flex-col gap-2 overflow-y-auto">
-          <a href="/" className="flex items-center gap-3 px-4 py-3 bg-rose-500/10 text-rose-400 rounded-xl font-medium border border-rose-500/20 transition-all hover:bg-rose-500/20">
+          <Link href="/" prefetch={true} className="flex items-center gap-3 px-4 py-3 bg-rose-500/10 text-rose-400 rounded-xl font-medium border border-rose-500/20 transition-all hover:bg-rose-500/20">
             <Activity className="w-5 h-5" />
             Live SOS Map
-          </a>
-          <a href="/safe-zones" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition-all">
+          </Link>
+          <Link href="/safe-zones" prefetch={true} className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition-all">
             <Map className="w-5 h-5" />
             Safe Zones
-          </a>
-          <a href="/users" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition-all">
+          </Link>
+          <Link href="/users" prefetch={true} className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition-all">
             <Users className="w-5 h-5" />
             Users & Analytics
-          </a>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">

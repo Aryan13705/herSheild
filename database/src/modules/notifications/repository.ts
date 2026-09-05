@@ -1,6 +1,6 @@
 import { BaseRepository } from "../../repositories/base";
 import { notifications } from "./tables";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "../../client";
 
 export class NotificationRepository extends BaseRepository<typeof notifications, typeof notifications.$inferInsert, typeof notifications.$inferSelect> {

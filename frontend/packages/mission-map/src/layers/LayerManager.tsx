@@ -10,12 +10,13 @@ interface LayerManagerProps {
 }
 
 export const LayerManager: React.FC<LayerManagerProps> = ({ children }) => {
-  const activeLayers = useLayerStore((state) => state.activeLayers);
+  const user = useLayerStore((state) => state.activeLayers.user);
+  const guardians = useLayerStore((state) => state.activeLayers.guardians);
 
   return (
     <>
-      {activeLayers.user && <UserLayer />}
-      {activeLayers.guardians && <GuardianLayer />}
+      {user && <UserLayer />}
+      {guardians && <GuardianLayer />}
       <SafetyZonesLayer />
       {children}
     </>

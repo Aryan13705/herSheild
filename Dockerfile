@@ -12,9 +12,9 @@ FROM base AS runner
 WORKDIR /app
 # Only copy the required build output for web
 # (This is a simplified Next.js multi-stage dockerfile for Phase 1)
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./.next/static
-COPY --from=builder /app/apps/web/public ./public
+COPY --from=builder /app/frontend/web/.next/standalone ./
+COPY --from=builder /app/frontend/web/.next/static ./.next/static
+COPY --from=builder /app/frontend/web/public ./public
 
 EXPOSE 3000
 CMD ["node", "server.js"]

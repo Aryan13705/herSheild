@@ -8,16 +8,18 @@ const TABS = ["Overview", "Destinations", "Itinerary", "Budget", "Notes", "Docum
 type Tab = typeof TABS[number];
 
 export default function TripDetailsPage() {
-  const params = useParams();
+  const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = React.useState<Tab>("Overview");
 
   // In a real app we'd fetch trpc.trips.getById(params.id)
+  const tripId = Array.isArray(id) ? id[0] : id;
   
   return (
     <div className="w-full flex flex-col h-[calc(100vh-80px)]">
       {/* Header */}
       <div className="pt-4 pb-2 px-4 shrink-0">
         <h1 className="text-2xl font-bold">Solo Paris Getaway</h1>
+        <p className="text-xs text-[var(--color-text-secondary)]">Trip ID: {tripId || "unknown"}</p>
         <p className="text-sm text-[var(--color-text-secondary)]">Aug 10 - Aug 20, 2026</p>
       </div>
 

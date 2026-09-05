@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@hershield/ui";
 import { Menu, X, Shield, MapPin, Info } from "lucide-react";
 
-function SmartPopup({ title, description, icon: Icon, children, trigger }: any) {
+function SmartPopup({ title, description, icon: Icon, children, trigger }: { title: string; description: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode; trigger: React.ReactElement; }) {
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -93,7 +93,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
               <Link href="/login">Log in</Link>
             </Button>
             <Button asChild>
-              <Link href="/register">Get Started</Link>
+              <Link href="/signup">Get Started</Link>
             </Button>
           </div>
         </div>

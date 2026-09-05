@@ -23,7 +23,7 @@ export default function OnboardingSetupPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold">You're all set</h1>
+        <h1 className="text-2xl font-bold">You&apos;re all set</h1>
         <p className="text-[var(--color-text-secondary)]">Your guardians are configured and HerShield is ready.</p>
         <Button className="w-full mt-8" onClick={() => window.location.href = "/"}>
           Go to Dashboard
@@ -52,7 +52,7 @@ export default function OnboardingSetupPage() {
         <CardContent className="p-0">
           {step === "WELCOME" && (
             <div className="space-y-4">
-              <h1 className="text-3xl font-bold">Let's set up your safety network</h1>
+              <h1 className="text-3xl font-bold">Let&apos;s set up your safety network</h1>
               <p className="text-[var(--color-text-secondary)]">Before you start traveling, we need to configure your emergency contacts and permissions.</p>
             </div>
           )}

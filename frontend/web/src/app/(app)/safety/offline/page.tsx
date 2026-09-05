@@ -1,23 +1,23 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  EmergencyButton,
-  OfflineBanner,
-  EmergencyCard,
-  SafetyCenterCard
-} from "@hershield/feature-safety";
+import { EmergencyButton } from "@hershield/feature-safety/src/ui/EmergencyButton";
+import { OfflineBanner } from "@hershield/feature-safety/src/ui/OfflineBanner";
+import { EmergencyCard } from "@hershield/feature-safety/src/ui/EmergencyCard";
+import { SafetyCenterCard } from "@hershield/feature-safety/src/ui/SafetyCenterCard";
 import { useCurrentUser } from "../../../../context/CurrentUserContext";
 import { getOfflineData } from "@hershield/feature-safety/src/offline/safetyStorage";
+
+type SafetyCenter = Record<string, unknown>;
 
 export default function OfflineSafetyPage() {
   const { user } = useCurrentUser();
   const [isEmergencyActive, setIsEmergencyActive] = useState(false);
-  const [cachedCenters, setCachedCenters] = useState<any[]>([]);
+  const [cachedCenters, setCachedCenters] = useState<SafetyCenter[]>([]);
 
   useEffect(() => {
     // Load cached centers if offline
-    getOfflineData<any[]>("cached_safety_locations").then((data) => {
+    getOfflineData<SafetyCenter[]>("cached_safety_locations").then((data) => {
       if (data) setCachedCenters(data);
     });
   }, []);

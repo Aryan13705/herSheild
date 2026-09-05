@@ -10,14 +10,14 @@ type EventName =
   | "LOGIN_SUCCESS";
 
 export function useAnalytics() {
-  const trackEvent = React.useCallback((eventName: EventName, properties?: Record<string, any>) => {
+  const trackEvent = React.useCallback((eventName: EventName, properties?: Record<string, unknown>) => {
     if (process.env.NODE_ENV !== "production") {
       console.log(`[Analytics Track]: ${eventName}`, properties);
     }
     // TODO: Integrate actual provider (PostHog/Mixpanel) later
   }, []);
 
-  const identifyUser = React.useCallback((userId: string, traits?: Record<string, any>) => {
+  const identifyUser = React.useCallback((userId: string, traits?: Record<string, unknown>) => {
     if (process.env.NODE_ENV !== "production") {
       console.log(`[Analytics Identify]: ${userId}`, traits);
     }

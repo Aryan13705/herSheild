@@ -12,7 +12,7 @@ import { AppGuardianOverlay } from "../components/AppGuardianOverlay";
 import { PerformanceMonitor } from "../components/PerformanceMonitor";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
 export const metadata: Metadata = {
   title: "HerShield | Travel with a guardian, always.",

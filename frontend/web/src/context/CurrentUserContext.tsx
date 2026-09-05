@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { auth } from "../lib/auth-client";
+import { auth, firebaseConfigError, isDemoMode } from "../lib/auth-client";
 import { onAuthStateChanged, User } from "firebase/auth";
 
 export type OnboardingStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
@@ -41,13 +41,12 @@ export function CurrentUserProvider({
   const [error, setError] = React.useState<Error | null>(null);
 
   React.useEffect(() => {
-    // If we're using a stub API key, Firebase will never resolve onAuthStateChanged.
-    // We must forcefully bypass it so the app doesn't hang on the loading screen forever.
-    const isStubbed = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY.includes('stub');
-    
-    if (isStubbed) {
-      console.warn("Using stubbed Firebase config. Bypassing auth state.");
-      setFirebaseUser({ uid: "stub-user", email: "test@hershield.app", displayName: "Test User" } as User);
+    if (!auth) {
+      if (isDemoMode) {
+        setFirebaseUser({ uid: "demo-user", email: "demo@hershield.app", displayName: "Demo User" } as User);
+      } else {
+        setError(new Error(firebaseConfigError || "Firebase auth is unavailable."));
+      }
       setIsLoading(false);
       return;
     }
@@ -60,29 +59,22 @@ export function CurrentUserProvider({
       setIsLoading(false);
     });
 
-    // Fallback timeout just in case Firebase hangs on a bad network connection
-    const timeoutId = setTimeout(() => {
-      if (isLoading) {
-        console.warn("Firebase auth timed out. Forcing load completion.");
-        setIsLoading(false);
-      }
-    }, 2500);
-
     return () => {
       unsubscribe();
-      clearTimeout(timeoutId);
     };
-  }, [isLoading]);
+  }, []);
 
   // Map Firebase user to our CurrentUser type
   const user = React.useMemo<CurrentUser | null>(() => {
     if (!firebaseUser) return initialUser;
+    if (!firebaseUser) {
+      return initialUser;
+    }
     
     return {
       id: firebaseUser.uid,
       email: firebaseUser.email || "",
       name: firebaseUser.displayName || "",
-      // Mocking missing fields since we haven't fetched from our DB yet
       role: "USER",
       permissions: [],
       onboardingStatus: "NOT_STARTED",
@@ -96,7 +88,7 @@ export function CurrentUserProvider({
 
   const refetchUser = React.useCallback(async () => {
     // With Firebase, the SDK automatically manages the session, but we can force a token refresh if needed
-    if (auth.currentUser) {
+    if (auth?.currentUser) {
       await auth.currentUser.getIdToken(true);
     }
   }, []);

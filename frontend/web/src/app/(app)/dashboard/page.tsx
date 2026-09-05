@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Card } from '@hershield/ui';
 import { Bell, Sun, MapPin, Map, ShieldAlert, Mic, Users, CalendarDays, CheckCircle2, BatteryWarning, ArrowRight } from 'lucide-react';
 import { ProfileWizard } from '@hershield/feature-onboarding';
-import { GuardianOrb } from '@hershield/feature-companion';
 import { useCurrentUser } from '@/context/CurrentUserContext';
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { user } = useCurrentUser();
   const [showWizard, setShowWizard] = useState(true);
 
@@ -27,14 +25,14 @@ export default function DashboardPage() {
             <Sun className="w-6 h-6 text-yellow-400 fill-yellow-400" />
             Good morning, {user.name.split(' ')[0] || 'User'}
           </h1>
-          <p className="text-gray-500 mt-1">You've got a plan. We've got your back.</p>
+          <p className="text-gray-500 mt-1">You&apos;ve got a plan. We&apos;ve got your back.</p>
         </div>
         <div className="flex items-center gap-4">
           <button className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
             <Bell className="w-5 h-5" />
           </button>
-          <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-200 shadow-sm cursor-pointer">
-             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=34A853&color=fff`} alt="Profile" className="w-full h-full object-cover" />
+          <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-200 shadow-sm cursor-pointer relative">
+             <Image src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=34A853&color=fff`} alt="Profile" fill className="object-cover" />
           </div>
         </div>
       </header>
@@ -50,7 +48,7 @@ export default function DashboardPage() {
           <div className="flex items-end justify-between">
             <div>
               <div className="text-4xl font-bold text-gray-900 tracking-tight">92<span className="text-xl text-gray-400 font-medium">/100</span></div>
-              <p className="text-sm text-[#34A853] font-medium mt-1">You're in a safe zone</p>
+              <p className="text-sm text-[#34A853] font-medium mt-1">You&apos;re in a safe zone</p>
             </div>
             {/* Mock Sparkline */}
             <svg className="w-24 h-12 stroke-[#34A853] fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,8 +174,8 @@ export default function DashboardPage() {
              ].map((contact, i) => (
                <div key={i} className="flex items-center justify-between">
                  <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden shrink-0">
-                     <img src={`https://ui-avatars.com/api/?name=${contact.name.replace(/\\s/g, '+')}&background=random`} alt={contact.name} className="w-full h-full object-cover" />
+                   <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden shrink-0 relative">
+                     <Image src={`https://ui-avatars.com/api/?name=${contact.name.replace(/\s/g, '+')}&background=random`} alt={contact.name} fill className="object-cover" />
                    </div>
                    <div>
                      <p className="text-sm font-semibold text-gray-900">{contact.name}</p>

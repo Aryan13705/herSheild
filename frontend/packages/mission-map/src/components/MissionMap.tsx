@@ -42,7 +42,7 @@ export const MissionMap: React.FC<MissionMapProps> = ({
       >
         <TileProvider theme="dark" />
         <LayerManager />
-        {children}
+        {children as any}
       </MapContainer>
       <MissionLegend />
     </div>

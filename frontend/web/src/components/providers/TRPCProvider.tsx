@@ -5,7 +5,6 @@ import { httpBatchLink } from "@trpc/client";
 import React, { useState } from "react";
 import { trpc } from "../../lib/trpc";
 import { auth } from "../../lib/auth-client";
-import superjson from "superjson";
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -24,7 +23,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           url: "/api/trpc",
           async headers() {
-            const user = auth.currentUser;
+            const user = auth?.currentUser;
             if (user) {
               const token = await user.getIdToken();
               return {

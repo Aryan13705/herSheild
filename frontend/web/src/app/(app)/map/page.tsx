@@ -11,7 +11,6 @@ import {
 } from '@hershield/feature-maps';
 import { 
   SafetyLocationService, 
-  LeafletSafetyMapLayer, 
   SafetyResource, 
   SafetyResourceType,
   SafetyCard
@@ -26,6 +25,11 @@ const MissionMap = dynamic(() => import('@hershield/mission-map').then((mod) => 
 });
 
 const MapController = dynamic(() => import('@hershield/mission-map').then((mod) => mod.MapController), { ssr: false });
+
+const LeafletSafetyMapLayer = dynamic(
+  () => import('@hershield/feature-safety/src/components/LeafletSafetyMapLayer').then(mod => mod.LeafletSafetyMapLayer),
+  { ssr: false }
+);
 
 // A simple local marker to represent the user or destination
 const LocalMarker = dynamic(

@@ -8,30 +8,54 @@ export const useLiveTracking = (missionId?: string) => {
   useEffect(() => {
     if (!missionId) return;
 
-    // Stub for WebSocket connection
-    const ws = new WebSocket(`wss://api.hershield.com/v1/mission/${missionId}/stream`);
+    let ws: WebSocket;
+    let reconnectTimer: NodeJS.Timeout;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_DELAY = 10000;
+    
+    // Throttle state updates to max once per second
+    let lastUpdate = 0;
 
-    ws.onopen = () => {
-      setIsConnected(true);
-    };
+    const connect = () => {
+      ws = new WebSocket(`wss://api.hershield.com/v1/mission/${missionId}/stream`);
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'USER_LOCATION_UPDATE') {
-          setCenter([data.lat, data.lng]);
+      ws.onopen = () => {
+        setIsConnected(true);
+        reconnectAttempts = 0;
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'USER_LOCATION_UPDATE') {
+            const now = Date.now();
+            if (now - lastUpdate > 1000) {
+              setCenter([data.lat, data.lng]);
+              lastUpdate = now;
+            }
+          }
+        } catch (err) {
+          console.error('Failed to parse realtime message', err);
         }
-      } catch (err) {
-        console.error('Failed to parse realtime message', err);
-      }
+      };
+
+      ws.onclose = () => {
+        setIsConnected(false);
+        // Exponential backoff reconnect
+        const delay = Math.min(1000 * Math.pow(1.5, reconnectAttempts), MAX_RECONNECT_DELAY);
+        reconnectAttempts++;
+        reconnectTimer = setTimeout(connect, delay);
+      };
     };
 
-    ws.onclose = () => {
-      setIsConnected(false);
-    };
+    connect();
 
     return () => {
-      ws.close();
+      clearTimeout(reconnectTimer);
+      if (ws) {
+        ws.onclose = null; // Prevent reconnect on explicit unmount
+        ws.close();
+      }
     };
   }, [missionId, setCenter]);
 

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button, Card, CardContent } from "@hershield/ui";
 import { Square, Loader2 } from "lucide-react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../../lib/auth-client";
+import { auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,6 +19,10 @@ export default function SignupPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) {
+      setError(isDemoMode ? "Demo mode is active. Use the demo dashboard flow." : (firebaseConfigError || "Authentication is not configured."));
+      return;
+    }
     if (!email || !password || !name || !phone) {
       setError("Please fill in all fields.");
       return;
@@ -33,13 +37,14 @@ export default function SignupPage() {
         displayName: name,
       });
       router.push("/dashboard");
-    } catch (err: any) {
-      if (err.code === "auth/email-already-in-use") {
+    } catch (err: unknown) {
+      const firebaseError = err as { code?: string; message?: string };
+      if (firebaseError.code === "auth/email-already-in-use") {
         setError("An account with this email already exists.");
-      } else if (err.code === "auth/weak-password") {
+      } else if (firebaseError.code === "auth/weak-password") {
         setError("Password should be at least 6 characters.");
       } else {
-        setError(err.message || "Failed to create account.");
+        setError(firebaseError.message || "Failed to create account.");
       }
     } finally {
       setLoading(false);

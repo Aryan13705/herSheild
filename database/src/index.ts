@@ -9,6 +9,9 @@ export * from "./modules/community/repository";
 export * from "./modules/ai/repository";
 export * from "./modules/notifications/repository";
 
+// AI tables
+export * from "./modules/ai/tables";
+
 // Table schema types
 export * as schema from "./modules/schema";
 

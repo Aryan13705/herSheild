@@ -19,10 +19,7 @@ export class SafetyLocationService {
     radiusKm: number,
     types: SafetyResourceType[]
   ): Promise<SafetyResource[]> {
-    if (!this.mapboxToken) {
-      console.warn('Mapbox token is missing. Falling back to offline cache.');
-      return this.getOfflineCache();
-    }
+    // Mapbox token check removed as we use Nominatim OpenStreetMap API
 
     try {
       const results: SafetyResource[] = [];

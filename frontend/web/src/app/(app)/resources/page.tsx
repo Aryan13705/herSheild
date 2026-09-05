@@ -3,6 +3,7 @@
 import React from 'react';
 import { Card } from '@hershield/ui';
 import { BookOpen, Map, ShieldAlert, Phone, FileText, Download, ArrowRight, Compass, Navigation, Users } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ResourcesPage() {
@@ -40,7 +41,7 @@ export default function ResourcesPage() {
               {/* Itinerary Card 1 */}
               <Card className="group bg-white p-1 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#34A853]/30 transition-all cursor-pointer overflow-hidden">
                 <div className="h-40 w-full rounded-[1.25rem] bg-gray-100 overflow-hidden relative">
-                  <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=800&auto=format&fit=crop" alt="Delhi" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <Image src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=800&auto=format&fit=crop" alt="Delhi" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                      <span className="px-2.5 py-1 rounded-md bg-[#34A853] text-white text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Verified Safe Route</span>
@@ -63,7 +64,7 @@ export default function ResourcesPage() {
               {/* Itinerary Card 2 */}
               <Card className="group bg-white p-1 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-purple-500/30 transition-all cursor-pointer overflow-hidden">
                 <div className="h-40 w-full rounded-[1.25rem] bg-gray-100 overflow-hidden relative">
-                  <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop" alt="Kerala" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <Image src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop" alt="Kerala" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                      <span className="px-2.5 py-1 rounded-md bg-purple-500 text-white text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Nature & Retreat</span>
