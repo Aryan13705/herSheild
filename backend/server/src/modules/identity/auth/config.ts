@@ -16,30 +16,32 @@ function loadServiceAccount() {
     try {
       if (existsSync(p)) {
         const parsed = JSON.parse(readFileSync(p, 'utf8'));
-        console.log('[Firebase Admin] Loaded service account from:', p);
+        console.log('[Firebase Admin] Loaded service account from file.');
         return parsed;
       }
-    } catch (_) {}
+    } catch (error) {
+      console.warn('[Firebase Admin] Could not read service account file.', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
   }
 
-  console.warn('[Firebase Admin] No service account file found. Using GOOGLE_APPLICATION_CREDENTIALS or falling back to mock auth.');
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+  if (projectId && clientEmail && privateKey) {
+    console.log('[Firebase Admin] Using service account environment variables.');
+    return { projectId, clientEmail, privateKey };
+  }
+
+  console.warn('[Firebase Admin] No service account credentials configured.');
   return null;
 }
 
 if (!getApps().length) {
   const serviceAccount = loadServiceAccount();
-  try {
-    initializeApp({
-      credential: serviceAccount ? cert(serviceAccount) : undefined,
-    });
-  } catch (e) {
-    // If no credential at all, init with project ID only for emulator mode
-    console.warn('[Firebase Admin] initializeApp failed, initializing without credentials for dev.', e);
-    try {
-      initializeApp({ projectId: 'hershield-4985d' });
-    } catch (_) {}
-  }
+  initializeApp(serviceAccount ? { credential: cert(serviceAccount) } : {});
 }
 
 export const auth = getAuth();
-

@@ -6,6 +6,30 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
 import { AIOrb } from "@hershield/ui";
 
+function getFirebaseAuthErrorMessage(error: unknown) {
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String(error.code)
+      : "unknown";
+
+  switch (code) {
+    case "auth/unauthorized-domain":
+      return "This domain is not authorized for Google sign-in.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the sign-in window. Allow popups and try again.";
+    case "auth/popup-closed-by-user":
+      return "Google sign-in was cancelled.";
+    case "auth/network-request-failed":
+      return "Network error while contacting Firebase. Check your connection and try again.";
+    case "auth/invalid-api-key":
+      return "Firebase authentication is misconfigured for this environment.";
+    case "auth/invalid-oauth-client-id":
+      return "Google sign-in is misconfigured for this environment.";
+    default:
+      return "Google sign-in failed. Please try again.";
+  }
+}
+
 function AICompanionWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -106,7 +130,7 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Login error:", err);
-      setError("Authorization failed.");
+      setError(getFirebaseAuthErrorMessage(err));
     } finally { setLoading(false); }
   };
 
@@ -120,8 +144,18 @@ export default function LoginPage() {
       await signInWithPopup(auth, googleProvider);
       router.push("/dashboard");
     } catch (err: unknown) {
-      console.error("Google Login error:", err);
-      setError("Authorization failed.");
+      const authError = err instanceof Error ? err : new Error("Unknown Firebase authentication error");
+      const errorCode =
+        typeof err === "object" && err !== null && "code" in err
+          ? String(err.code)
+          : "unknown";
+      console.error("[Firebase Auth] Google sign-in failed", {
+        code: errorCode,
+        message: authError.message,
+        hostname: window.location.hostname,
+        environment: process.env.NODE_ENV,
+      });
+      setError(getFirebaseAuthErrorMessage(err));
     } finally { setGoogleLoading(false); }
   };
 

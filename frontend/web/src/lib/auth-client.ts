@@ -11,14 +11,28 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const requiredConfigKeys = ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"] as const;
-const isFirebaseConfigured = requiredConfigKeys.every((key) => Boolean(firebaseConfig[key]));
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true" || !isFirebaseConfigured;
+// These are the fields Firebase Authentication needs. Storage and Cloud
+// Messaging are intentionally not prerequisites for signing a user in.
+const requiredAuthConfigKeys = ["apiKey", "authDomain", "projectId", "appId"] as const;
+const isFirebaseConfigured = requiredAuthConfigKeys.every((key) => Boolean(firebaseConfig[key]));
+const isDemoMode =
+  process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
+  process.env.NODE_ENV !== "production";
 
 export const firebaseConfigError = isFirebaseConfigured || isDemoMode
   ? null
-  : "Firebase is not configured. Set NEXT_PUBLIC_FIREBASE_* environment variables or enable NEXT_PUBLIC_DEMO_MODE=true for an explicit demo flow.";
+  : "Firebase is not configured. Set all NEXT_PUBLIC_FIREBASE_* environment variables.";
 export { isFirebaseConfigured, isDemoMode };
+
+if (typeof window !== "undefined") {
+  console.info("[Firebase Auth] Client configuration", {
+    environment: process.env.NODE_ENV,
+    hostname: window.location.hostname,
+    fieldsPresent: Object.fromEntries(
+      Object.keys(firebaseConfig).map((key) => [key, Boolean(firebaseConfig[key as keyof typeof firebaseConfig])]),
+    ),
+  });
+}
 
 // Initialize Firebase
 const app = isFirebaseConfigured && getApps().length > 0

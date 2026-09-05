@@ -67,9 +67,6 @@ export function CurrentUserProvider({
   // Map Firebase user to our CurrentUser type
   const user = React.useMemo<CurrentUser | null>(() => {
     if (!firebaseUser) return initialUser;
-    if (!firebaseUser) {
-      return initialUser;
-    }
     
     return {
       id: firebaseUser.uid,

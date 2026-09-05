@@ -61,7 +61,7 @@ export const isAuthed = t.middleware(async ({ ctx, next }) => {
         session: null,
       },
     });
-  } catch (_err) {
+  } catch (err) {
     // In DEMO_MODE, allow token verification failures (e.g., Firebase emulator)
     if (DEMO_MODE) {
       console.warn("[TRPC] Token verification failed in DEMO_MODE — using demo user.");
@@ -72,6 +72,11 @@ export const isAuthed = t.middleware(async ({ ctx, next }) => {
         },
       });
     }
+    console.error("[TRPC] Firebase token verification failed", {
+      code: err instanceof Error && "code" in err ? String(err.code) : "unknown",
+      message: err instanceof Error ? err.message : "Unknown authentication error",
+      environment: process.env.NODE_ENV,
+    });
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid or expired token." });
   }
 });
@@ -80,4 +85,3 @@ export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);
 export const createCallerFactory = t.createCallerFactory;
 export const router = t.router;
-
