@@ -13,3 +13,6 @@ out/
 build/
 dist/
 coverage/
+.turbo/
+**/.turbo/
+.vscode/
