@@ -6,7 +6,9 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
-const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || process.env.DEMO_MODE === 'true';
+const demoMode =
+  (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || process.env.DEMO_MODE === 'true') &&
+  process.env.NODE_ENV !== 'production';
 const modelName = process.env.GOOGLE_GENERATIVE_AI_MODEL ?? 'models/gemini-1.5-pro-latest';
 
 export async function POST(req: Request) {

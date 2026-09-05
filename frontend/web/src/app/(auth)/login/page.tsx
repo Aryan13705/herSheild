@@ -6,6 +6,20 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signInWithPopup, googleProvider, auth, firebaseConfigError, isDemoMode } from "../../../lib/auth-client";
 import { AIOrb } from "@hershield/ui";
 
+function getAuthErrorMessage(error: unknown) {
+  const firebaseError = error as { code?: unknown; message?: unknown };
+  const code = typeof firebaseError.code === "string" ? firebaseError.code : "auth/unknown";
+  const message = typeof firebaseError.message === "string" ? firebaseError.message : "Authentication failed.";
+
+  console.error("Firebase authentication failed", {
+    code,
+    message,
+    hostname: window.location.hostname,
+  });
+
+  return `Authentication failed (${code}). Please try again.`;
+}
+
 function AICompanionWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -105,8 +119,7 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
     } catch (err: unknown) {
-      console.error("Login error:", err);
-      setError("Authorization failed.");
+      setError(getAuthErrorMessage(err));
     } finally { setLoading(false); }
   };
 
@@ -120,8 +133,7 @@ export default function LoginPage() {
       await signInWithPopup(auth, googleProvider);
       router.push("/dashboard");
     } catch (err: unknown) {
-      console.error("Google Login error:", err);
-      setError("Authorization failed.");
+      setError(getAuthErrorMessage(err));
     } finally { setGoogleLoading(false); }
   };
 

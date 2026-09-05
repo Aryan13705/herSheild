@@ -13,11 +13,15 @@ const firebaseConfig = {
 
 const requiredConfigKeys = ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"] as const;
 const isFirebaseConfigured = requiredConfigKeys.every((key) => Boolean(firebaseConfig[key]));
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true" || !isFirebaseConfigured;
+// Demo access is an explicit local-development opt-in. Missing Firebase
+// configuration must remain a visible configuration error, never a login bypass.
+const isDemoMode =
+  process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
+  process.env.NODE_ENV !== "production";
 
 export const firebaseConfigError = isFirebaseConfigured || isDemoMode
   ? null
-  : "Firebase is not configured. Set NEXT_PUBLIC_FIREBASE_* environment variables or enable NEXT_PUBLIC_DEMO_MODE=true for an explicit demo flow.";
+  : "Firebase authentication is not configured for this environment. Set all NEXT_PUBLIC_FIREBASE_* variables.";
 export { isFirebaseConfigured, isDemoMode };
 
 // Initialize Firebase

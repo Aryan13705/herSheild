@@ -1,45 +1,22 @@
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { readFileSync, existsSync } from 'fs';
-import { resolve } from 'path';
 
-function loadServiceAccount() {
-  // Try all possible paths where the service account key might live
-  const candidatePaths = [
-    resolve(process.cwd(), 'firebase-service-account.json'),
-    resolve(process.cwd(), '../../firebase-service-account.json'),
-    resolve(process.cwd(), '../../packages/server/firebase-service-account.json'),
-    resolve(__dirname, '../../../../../firebase-service-account.json'),
-  ];
-
-  for (const p of candidatePaths) {
-    try {
-      if (existsSync(p)) {
-        const parsed = JSON.parse(readFileSync(p, 'utf8'));
-        console.log('[Firebase Admin] Loaded service account from:', p);
-        return parsed;
-      }
-    } catch (_) {}
-  }
-
-  console.warn('[Firebase Admin] No service account file found. Using GOOGLE_APPLICATION_CREDENTIALS or falling back to mock auth.');
-  return null;
-}
+const projectId = process.env.FIREBASE_PROJECT_ID ?? 'hershield-4985d';
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const credential = clientEmail && privateKey
+  ? cert({ projectId, clientEmail, privateKey })
+  : undefined;
 
 if (!getApps().length) {
-  const serviceAccount = loadServiceAccount();
-  try {
-    initializeApp({
-      credential: serviceAccount ? cert(serviceAccount) : undefined,
-    });
-  } catch (e) {
-    // If no credential at all, init with project ID only for emulator mode
-    console.warn('[Firebase Admin] initializeApp failed, initializing without credentials for dev.', e);
-    try {
-      initializeApp({ projectId: 'hershield-4985d' });
-    } catch (_) {}
+  initializeApp({
+    projectId,
+    ...(credential ? { credential } : {}),
+  });
+
+  if (!credential) {
+    console.warn('[Firebase Admin] Service-account environment variables are not configured; token verification may be unavailable.');
   }
 }
 
 export const auth = getAuth();
-
