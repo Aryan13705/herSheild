@@ -13,9 +13,9 @@ const firebaseConfig = {
 
 const requiredConfigKeys = ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"] as const;
 const isFirebaseConfigured = requiredConfigKeys.every((key) => Boolean(firebaseConfig[key]));
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true" || !isFirebaseConfigured;
 
-export const firebaseConfigError = isFirebaseConfigured
+export const firebaseConfigError = isFirebaseConfigured || isDemoMode
   ? null
   : "Firebase is not configured. Set NEXT_PUBLIC_FIREBASE_* environment variables or enable NEXT_PUBLIC_DEMO_MODE=true for an explicit demo flow.";
 export { isFirebaseConfigured, isDemoMode };
